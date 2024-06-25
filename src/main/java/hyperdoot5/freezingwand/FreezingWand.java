@@ -29,58 +29,6 @@ public class FreezingWand
     // Directly reference a slf4j logger
     private static final Logger LOGGER = LogUtils.getLogger();
 
-//    // Create a Deferred Register to hold Items which will all be registered under the "freezingwand" namespace
-//    public static final DeferredRegister.Items ITEMS = DeferredRegister.createItems(MODID);
-//    // Create a Deferred Register to hold CreativeModeTabs which will all be registered under the "freezingwand" namespace
-//    public static final DeferredRegister<CreativeModeTab> CREATIVE_MODE_TABS = DeferredRegister.create(Registries.CREATIVE_MODE_TAB, MODID);
-
-
-    // Creates a new item with the id "freezingwand:freezing_wand"
-//    public static final DeferredItem<Item> FREEZING_WAND = ITEMS.registerSimpleItem(
-//            "freezing_wand", new Item.Properties()
-//                    .durability(100)
-//                    .stacksTo(1)
-//                    .component(DataComponents.ENCHANTMENT_GLINT_OVERRIDE, true));
-
-
-//    // Test Item registering, fingers crossed
-//    public static final DeferredItem<Item> FREEZING_WAND = ITEMS.register(
-//            "freezing_wand", () -> new FreezingWandItem( new Item.Properties()
-//                    .durability(100)
-//                    .stacksTo(1)
-//                    .component(DataComponents.ENCHANTMENT_GLINT_OVERRIDE, true)){
-//
-//    //from TFItems
-////    @Override
-////    public InteractionResult useOn(UseOnContext context) {
-////        return context.getLevel().getBlockState(context.getClickedPos()).is(this.getBlock()) ? super.useOn(context) : InteractionResult.PASS;
-////    }
-//
-//    @Override
-//    public @NotNull InteractionResultHolder<ItemStack> use(@NotNull Level level, @NotNull Player player, @NotNull InteractionHand hand) {
-//        BlockHitResult fluidHitResult = getPlayerPOVHitResult(level, player, ClipContext.Fluid.SOURCE_ONLY);
-//        BlockHitResult placeBlockResult = fluidHitResult.withPosition(fluidHitResult.getBlockPos().above());
-//        InteractionResult result = super.useOn(new UseOnContext(player, hand, placeBlockResult));
-//        return new InteractionResultHolder<>(result, player.getItemInHand(hand));
-//    }});
-
-
-
-
-
-
-
-
-//    // Creates a creative tab with the id "freezingwand: freezing_wand" for the example item, that is placed after the combat tab
-//    public static final DeferredHolder<CreativeModeTab, CreativeModeTab> FREEZING_WAND_TAB = CREATIVE_MODE_TABS.register("freezingwand", () -> CreativeModeTab.builder()
-//            .title(Component.translatable("Hocus Pocus")) //The language key for the title of your CreativeModeTab
-//            .withTabsBefore(CreativeModeTabs.COMBAT)
-//            .icon(() -> FREEZING_WAND.get().getDefaultInstance())
-//            .displayItems((parameters, output) -> {
-//                output.accept(FREEZING_WAND.get()); // Add the item to the tab.
-//            }).build());
-
-
     // The constructor for the mod class is the first code that is run when your mod is loaded.
     // FML will recognize some parameter types like IEventBus or ModContainer and pass them in automatically.
     public FreezingWand(IEventBus modEventBus, ModContainer modContainer)
