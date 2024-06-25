@@ -2,11 +2,6 @@ package hyperdoot5.freezingwand;
 
 import com.mojang.logging.LogUtils;
 import net.minecraft.client.Minecraft;
-import net.minecraft.core.registries.Registries;
-import net.minecraft.network.chat.Component;
-import net.minecraft.world.item.CreativeModeTab;
-import net.minecraft.world.item.CreativeModeTabs;
-import net.minecraft.world.item.Item;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.bus.api.SubscribeEvent;
@@ -17,12 +12,13 @@ import net.neoforged.fml.config.ModConfig;
 import net.neoforged.fml.event.lifecycle.FMLClientSetupEvent;
 import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.neoforged.neoforge.common.NeoForge;
-import net.neoforged.neoforge.event.BuildCreativeModeTabContentsEvent;
 import net.neoforged.neoforge.event.server.ServerStartingEvent;
-import net.neoforged.neoforge.registries.DeferredHolder;
-import net.neoforged.neoforge.registries.DeferredItem;
-import net.neoforged.neoforge.registries.DeferredRegister;
+
 import org.slf4j.Logger;
+
+import static hyperdoot5.freezingwand.init.CreativeTabs.CREATIVE_MODE_TABS;
+import static hyperdoot5.freezingwand.init.ModItems.ITEMS;
+
 
 // The value here should match an entry in the META-INF/neoforge.mods.toml file
 @Mod(FreezingWand.MODID)
@@ -33,27 +29,63 @@ public class FreezingWand
     // Directly reference a slf4j logger
     private static final Logger LOGGER = LogUtils.getLogger();
 
-    // Create a Deferred Register to hold Items which will all be registered under the "freezingwand" namespace
-    public static final DeferredRegister.Items ITEMS = DeferredRegister.createItems(MODID);
-    // Create a Deferred Register to hold CreativeModeTabs which will all be registered under the "freezingwand" namespace
-    public static final DeferredRegister<CreativeModeTab> CREATIVE_MODE_TABS = DeferredRegister.create(Registries.CREATIVE_MODE_TAB, MODID);
+//    // Create a Deferred Register to hold Items which will all be registered under the "freezingwand" namespace
+//    public static final DeferredRegister.Items ITEMS = DeferredRegister.createItems(MODID);
+//    // Create a Deferred Register to hold CreativeModeTabs which will all be registered under the "freezingwand" namespace
+//    public static final DeferredRegister<CreativeModeTab> CREATIVE_MODE_TABS = DeferredRegister.create(Registries.CREATIVE_MODE_TAB, MODID);
 
-    // Creates a new food item with the id "freezingwand:freezing_wand"
-    public static final DeferredItem<Item> FREEZING_WAND = ITEMS.registerSimpleItem("freezing_wand",new Item.Properties().durability(100));
 
-    // Creates a creative tab with the id "freezingwand:freezingwand_tab" for the wand item, that is placed after the combat tab
-    public static final DeferredHolder<CreativeModeTab, CreativeModeTab> FREEZING_WAND_TAB = CREATIVE_MODE_TABS.register("freezing_wand_tab", () -> CreativeModeTab.builder()
-            .title(Component.translatable("itemGroup.freezingwand"))
-            .withTabsBefore(CreativeModeTabs.COMBAT)
-            .icon(() -> FREEZING_WAND.get().getDefaultInstance())
-            .displayItems((parameters, output) -> {
-                output.accept(FREEZING_WAND.get()); // Add the wand item to the tab. For your own tabs, this method is preferred over the event
-            }).build());
+    // Creates a new item with the id "freezingwand:freezing_wand"
+//    public static final DeferredItem<Item> FREEZING_WAND = ITEMS.registerSimpleItem(
+//            "freezing_wand", new Item.Properties()
+//                    .durability(100)
+//                    .stacksTo(1)
+//                    .component(DataComponents.ENCHANTMENT_GLINT_OVERRIDE, true));
+
+
+//    // Test Item registering, fingers crossed
+//    public static final DeferredItem<Item> FREEZING_WAND = ITEMS.register(
+//            "freezing_wand", () -> new FreezingWandItem( new Item.Properties()
+//                    .durability(100)
+//                    .stacksTo(1)
+//                    .component(DataComponents.ENCHANTMENT_GLINT_OVERRIDE, true)){
+//
+//    //from TFItems
+////    @Override
+////    public InteractionResult useOn(UseOnContext context) {
+////        return context.getLevel().getBlockState(context.getClickedPos()).is(this.getBlock()) ? super.useOn(context) : InteractionResult.PASS;
+////    }
+//
+//    @Override
+//    public @NotNull InteractionResultHolder<ItemStack> use(@NotNull Level level, @NotNull Player player, @NotNull InteractionHand hand) {
+//        BlockHitResult fluidHitResult = getPlayerPOVHitResult(level, player, ClipContext.Fluid.SOURCE_ONLY);
+//        BlockHitResult placeBlockResult = fluidHitResult.withPosition(fluidHitResult.getBlockPos().above());
+//        InteractionResult result = super.useOn(new UseOnContext(player, hand, placeBlockResult));
+//        return new InteractionResultHolder<>(result, player.getItemInHand(hand));
+//    }});
+
+
+
+
+
+
+
+
+//    // Creates a creative tab with the id "freezingwand: freezing_wand" for the example item, that is placed after the combat tab
+//    public static final DeferredHolder<CreativeModeTab, CreativeModeTab> FREEZING_WAND_TAB = CREATIVE_MODE_TABS.register("freezingwand", () -> CreativeModeTab.builder()
+//            .title(Component.translatable("Hocus Pocus")) //The language key for the title of your CreativeModeTab
+//            .withTabsBefore(CreativeModeTabs.COMBAT)
+//            .icon(() -> FREEZING_WAND.get().getDefaultInstance())
+//            .displayItems((parameters, output) -> {
+//                output.accept(FREEZING_WAND.get()); // Add the item to the tab.
+//            }).build());
+
 
     // The constructor for the mod class is the first code that is run when your mod is loaded.
     // FML will recognize some parameter types like IEventBus or ModContainer and pass them in automatically.
     public FreezingWand(IEventBus modEventBus, ModContainer modContainer)
     {
+
         // Register the commonSetup method for modloading
         modEventBus.addListener(this::commonSetup);
 
@@ -67,8 +99,6 @@ public class FreezingWand
         // Do not add this line if there are no @SubscribeEvent-annotated functions in this class, like onServerStarting() below.
         NeoForge.EVENT_BUS.register(this);
 
-        // Register the item to a creative tab
-        modEventBus.addListener(this::addCreative);
 
         // Register our mod's ModConfigSpec so that FML can create and load the config file for us
         modContainer.registerConfig(ModConfig.Type.COMMON, Config.SPEC);
@@ -80,13 +110,6 @@ public class FreezingWand
         LOGGER.info("Freezing Wand Setup Initiated");
 
         Config.items.forEach((item) -> LOGGER.info("ITEM >> {}", item.toString()));
-    }
-
-    // Add the example block item to the combat tab
-    private void addCreative(BuildCreativeModeTabContentsEvent event)
-    {
-        if (event.getTabKey() == CreativeModeTabs.COMBAT)
-            event.accept(FREEZING_WAND);
     }
 
     // You can use SubscribeEvent and let the Event Bus discover methods to call
