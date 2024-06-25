@@ -18,6 +18,7 @@ import net.minecraft.world.item.enchantment.Enchantments;
 import net.minecraft.world.level.ClipContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.BlockHitResult;
 import net.neoforged.fml.common.EventBusSubscriber;
 import org.jetbrains.annotations.NotNull;
@@ -35,28 +36,34 @@ public class FreezingWandItem extends Item {
     public FreezingWandItem(Item.Properties properties) {
         super(properties);
     }
-    // Test Code from Twilight Forest/item/FortificationWandItem
+    // some Test Code from Twilight Forest/item/FortificationWandItem
+//    @Override
+//    public InteractionResult useOn(UseOnContext context) {
+//
+//
+//        if (stack.getDamageValue() == stack.getMaxDamage() && !player.getAbilities().instabuild) {
+//            return InteractionResult.FAIL;
+//        }
+//
+//        if (!level.isClientSide()) {
+//            if(!player.getAbilities().instabuild) {
+//                stack.hurtAndBreak(1, (ServerLevel) level, player, item -> {});
+//            }
+//        }
+//
+//    }
     @Override
-    public InteractionResultHolder<ItemStack> use(Level level, Player player, @Nonnull InteractionHand hand) {
-        ItemStack stack = player.getItemInHand(hand);
-
-        if (stack.getDamageValue() == stack.getMaxDamage() && !player.getAbilities().instabuild) {
-            return InteractionResultHolder.fail(stack);
-        }
-
-        if (!level.isClientSide()) {
-            if(!player.getAbilities().instabuild) {
-                stack.hurtAndBreak(1, (ServerLevel) level, player, item -> {});
+    public InteractionResult useOn(UseOnContext context) {
+        if (!context.getLevel().isClientSide()) {
+            BlockState iceBlockState = Blocks.ICE.defaultBlockState();
+            context.getLevel().setBlock(context.getClickedPos(), iceBlockState, 3);
+            if (context.getPlayer() != null){
+                context.getItemInHand().hurtAndBreak(1, context.getPlayer(), (player) -> player.broadcastBreakEvent(context.getHand()));
             }
+            return InteractionResult.SUCCESS;
         }
-
-
-        if (!player.isCreative())
-            player.getCooldowns().addCooldown(this, 1200);
-
-        return InteractionResultHolder.success(stack);
+        return InteractionResult.PASS;
     }
-
     @Override
     public boolean isEnchantable(ItemStack stack) {
         return false;
@@ -70,7 +77,7 @@ public class FreezingWandItem extends Item {
     @Override
     public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> tooltip, TooltipFlag flags) {
         super.appendHoverText(stack, context, tooltip, flags);
-        tooltip.add(Component.translatable("item.twilightforest.scepter.desc", stack.getMaxDamage() - stack.getDamageValue()).withStyle(ChatFormatting.GRAY));
+        tooltip.add(Component.translatable("Epic Description", stack.getMaxDamage() - stack.getDamageValue()).withStyle(ChatFormatting.GRAY));
     }
 }
 
