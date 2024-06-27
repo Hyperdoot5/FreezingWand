@@ -15,7 +15,7 @@ public class CreativeTabs {
     public static final DeferredRegister<CreativeModeTab> CREATIVE_MODE_TABS = DeferredRegister.create(Registries.CREATIVE_MODE_TAB, MODID);
     // Creates a creative tab with the id "freezingwand: freezing_wand" for the example item, that is placed after the combat tab
     public static final DeferredHolder<CreativeModeTab, CreativeModeTab> FREEZING_WAND_TAB = CREATIVE_MODE_TABS.register("freezingwand", () -> CreativeModeTab.builder()
-            .title(Component.translatable("Hocus Pocus")) //The language key for the title of your CreativeModeTab
+            .title(Component.translatable("itemGroup.freezingwand")) //The language key for the title of your CreativeModeTab
             .withTabsBefore(CreativeModeTabs.COMBAT)
             .icon(() -> FREEZING_WAND.get().getDefaultInstance())
             .displayItems((parameters, output) -> {
