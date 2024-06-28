@@ -1,5 +1,7 @@
 {
   "item.freezingwand.freezing_wand": "Freezing Wand",
   "item.freezingwand.description": "Epic Description",
-  "itemGroup.freezingwand": "Hocus Pocus"
+  "itemGroup.freezingwand": "Hocus Pocus",
+  "advancement.freezingwand.freezing_wand.description": "Craft the Freezing Wand",
+  "advancement.freezingwand.freezing_wand": "Ice Ice Baby"
 }

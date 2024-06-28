@@ -1,0 +1,25 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "tool",
+  "group": "freezing_wand",
+  "key": {
+    "#": {
+      "tag": "minecraft:packed_ice"
+    },
+    "%": {
+      "tag": "minecraft:ice"
+    },
+    "X": {
+      "tag": "minecraft:stick"
+    }
+  },
+  "pattern": [
+    "#",
+    "%X%",
+    "X"
+  ],
+  "result": {
+    "count": 1,
+    "id": "freezingwand:freezing_wand"
+  }
+}

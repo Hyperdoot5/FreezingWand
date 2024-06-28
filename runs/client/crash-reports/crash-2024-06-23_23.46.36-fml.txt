@@ -48,12 +48,12 @@ Details:
 	Failure message: fml.modloading.failedtoloadmod
 	Mod Version: 1.0-SNAPSHOT
 	Mod Issue URL: NOT PROVIDED
-	Exception message: java.lang.IllegalArgumentException: class hyperdoot5.freezingwand.FreezingWand has no @SubscribeEvent methods, but register was called anyway.
+	Exception message: java.lang.IllegalArgumentException: class hyperdoot5.freezingwand.FreezingWandMod has no @SubscribeEvent methods, but register was called anyway.
 The event bus only recognizes listener methods that have the @SubscribeEvent annotation.
 
 Stacktrace:
 	at MC-BOOTSTRAP/net.neoforged.bus/net.neoforged.bus.EventBus.register(EventBus.java:115) ~[bus-8.0.1.jar%23147!/:?] {}
-	at TRANSFORMER/freezingwand@1.0-SNAPSHOT/hyperdoot5.freezingwand.FreezingWand.<init>(FreezingWand.java:57) ~[%23192!/:?] {re:classloading}
+	at TRANSFORMER/freezingwand@1.0-SNAPSHOT/hyperdoot5.freezingwand.FreezingWandMod.<init>(FreezingWand.java:57) ~[%23192!/:?] {re:classloading}
 	at java.base/jdk.internal.reflect.DirectConstructorHandleAccessor.newInstance(DirectConstructorHandleAccessor.java:62) ~[?:?] {}
 	at java.base/java.lang.reflect.Constructor.newInstanceWithCaller(Constructor.java:502) ~[?:?] {}
 	at java.base/java.lang.reflect.Constructor.newInstance(Constructor.java:486) ~[?:?] {}
