@@ -1,12 +1,15 @@
 package hyperdoot5.freezingwand;
 
 import com.mojang.logging.LogUtils;
+import hyperdoot5.freezingwand.init.FWRecipes;
+import hyperdoot5.freezingwand.util.FWAnvilHandler;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.fml.ModContainer;
 import net.neoforged.fml.common.Mod;
 import net.neoforged.fml.config.ModConfig;
 import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
 
+import net.neoforged.neoforge.common.NeoForge;
 import org.slf4j.Logger;
 
 import static hyperdoot5.freezingwand.init.FWCreativeTabs.CREATIVE_MODE_TABS;
@@ -34,14 +37,13 @@ public class FreezingWandMod
         ITEMS.register(modEventBus);
         // Register the Deferred Register to the mod event bus so tabs get registered
         CREATIVE_MODE_TABS.register(modEventBus);
-
-//        FWAdvancements.TRIGGERS.register(modEventBus);
+        // Register the Deferred Register to the mod even bus so Custom Recipes get registered
+        FWRecipes.RECIPE_SERIALIZERS.register(modEventBus);
 
         // Register ourselves for server and other game events we are interested in.
         // Note that this is necessary if and only if we want *this* class (ExampleMod) to respond directly to events.
         // Do not add this line if there are no @SubscribeEvent-annotated functions in this class, like onServerStarting() below.
-//        NeoForge.EVENT_BUS.register(this);
-
+        NeoForge.EVENT_BUS.register(new FWAnvilHandler());
 
         // Register our mod's ModConfigSpec so that FML can create and load the config file for us
         modContainer.registerConfig(ModConfig.Type.COMMON, Config.SPEC);

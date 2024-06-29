@@ -1,7 +1,13 @@
 {
   "item.freezingwand.freezing_wand": "Freezing Wand",
-  "item.freezingwand.description": "Epic Description",
+  "item.freezingwand.desc": "Epic Description",
   "itemGroup.freezingwand": "Hocus Pocus",
-  "advancement.freezingwand.freezing_wand.description": "Craft the Freezing Wand",
-  "advancement.freezingwand.freezing_wand": "Ice Ice Baby"
+  "advancement.freezingwand.freezing_wand.desc": "Craft the Freezing Wand",
+  "advancement.freezingwand.freezing_wand": "Ice Ice Baby",
+  "advancement.freezingwand.root.desc": "Obtain Ice",
+  "advancement.freezingwand.root": "Freezing Wand",
+  "advancement.freezingwand.progress_packed_ice.desc": "Obtain Packed Ice",
+  "advancement.freezingwand.progress_packed_ice": "Chills",
+  "advancement.freezingwand.progress_blue_ice.desc": "Obtain Blue Ice",
+  "advancement.freezingwand.progress_blue_ice": "A Dense Cold"
 }

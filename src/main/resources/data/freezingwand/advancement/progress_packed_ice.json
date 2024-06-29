@@ -1,0 +1,37 @@
+{
+  "parent": "freezingwand:root",
+  "criteria": {
+    "has_packed_ice": {
+      "conditions": {
+        "items": [
+          {
+            "items": "minecraft:packed_ice"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    }
+  },
+  "display": {
+    "announce_to_chat": false,
+    "description": {
+      "translate": "advancement.freezingwand.progress_packed_ice.desc"
+    },
+    "icon": {
+      "count": 1,
+      "id": "minecraft:packed_ice"
+    },
+    "title": {
+      "translate": "advancement.freezingwand.progress_packed_ice"
+    }
+  },
+  "requirements": [
+    [
+      "has_packed_ice"
+    ]
+  ],
+  "rewards": {
+    "experience": 100
+  },
+  "sends_telemetry_event": true
+}

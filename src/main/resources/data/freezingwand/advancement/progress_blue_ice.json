@@ -1,0 +1,40 @@
+{
+  "parent": "freezingwand:progress_packed_ice",
+  "criteria": {
+    "has_blue_ice": {
+      "conditions": {
+        "items": [
+          {
+            "items": "minecraft:blue_ice"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    }
+  },
+  "display": {
+    "announce_to_chat": false,
+    "description": {
+      "translate": "advancement.freezingwand.progress_blue_ice.desc"
+    },
+    "icon": {
+      "count": 1,
+      "id": "minecraft:packed_ice"
+    },
+    "title": {
+      "translate": "advancement.freezingwand.progress_blue_ice"
+    }
+  },
+  "requirements": [
+    [
+      "has_blue_ice"
+    ]
+  ],
+  "rewards": {
+    "experience": 100,
+    "recipes": [
+      "freezingwand:freezing_wand"
+    ]
+  },
+  "sends_telemetry_event": true
+}
