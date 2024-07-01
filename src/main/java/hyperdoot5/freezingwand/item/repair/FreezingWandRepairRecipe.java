@@ -1,4 +1,4 @@
-package hyperdoot5.freezingwand.item.recipe;
+package hyperdoot5.freezingwand.item.repair;
 
 import hyperdoot5.freezingwand.init.FWItems;
 import hyperdoot5.freezingwand.init.FWRecipes;
@@ -79,14 +79,14 @@ public class FreezingWandRepairRecipe extends CustomRecipe {
         if ((!iceList.isEmpty() || !packed_iceList.isEmpty() || !blue_iceList.isEmpty()) && wand != null && wand.isDamaged()) {
             ItemStack newWand = FWItems.FREEZING_WAND.get().getDefaultInstance();
             if(!iceList.isEmpty()) {
-                //each block of iceList repairs 5 durability
-                newWand.setDamageValue(wand.getDamageValue() - (iceList.size() * 5));
+                //each block of iceList repairs 1 durability
+                newWand.setDamageValue(wand.getDamageValue() - (iceList.size()));
             } else if(!packed_iceList.isEmpty()) {
-                //each block of packed_iceList repairs 15 durability
-                newWand.setDamageValue(wand.getDamageValue() - (packed_iceList.size() * 15));
+                //each block of packed_iceList repairs 10 durability
+                newWand.setDamageValue(wand.getDamageValue() - (packed_iceList.size() * 10));
             } else {
-                //each block of blue_iceList repairs 35 durability
-                newWand.setDamageValue(wand.getDamageValue() - (blue_iceList.size() * 35));
+                //each block of blue_iceList repairs 100 durability
+                newWand.setDamageValue(wand.getDamageValue() - (blue_iceList.size() * 100));
             }
             return newWand;
         }

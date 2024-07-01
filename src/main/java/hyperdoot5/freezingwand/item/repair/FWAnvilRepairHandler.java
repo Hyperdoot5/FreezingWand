@@ -1,14 +1,14 @@
-package hyperdoot5.freezingwand.util;
+package hyperdoot5.freezingwand.item.repair;
 
 import hyperdoot5.freezingwand.init.FWItems;
-import net.minecraft.core.component.DataComponents;
-import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.Blocks;
 import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.event.AnvilUpdateEvent;
 
+import static hyperdoot5.freezingwand.FreezingWandMod.MODID;
 
-public class FWAnvilHandler {
+public class FWAnvilRepairHandler {
     //repair freezing wand in anvil using ice, packed ice, or blue ice
     @SubscribeEvent
     public void updateAnvilIce(AnvilUpdateEvent event) {
@@ -37,4 +37,5 @@ public class FWAnvilHandler {
             event.setMaterialCost(1);
         }
     }
+// add way to change name in anvil
 }

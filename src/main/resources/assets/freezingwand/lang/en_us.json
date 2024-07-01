@@ -9,5 +9,7 @@
   "advancement.freezingwand.progress_packed_ice.desc": "Obtain Packed Ice",
   "advancement.freezingwand.progress_packed_ice": "Chills",
   "advancement.freezingwand.progress_blue_ice.desc": "Obtain Blue Ice",
-  "advancement.freezingwand.progress_blue_ice": "A Dense Cold"
+  "advancement.freezingwand.progress_blue_ice": "A Dense Cold",
+  "key.categories.freezingwand.freezingwand": "Freezing Wand",
+  "key.freezingwand.shift_rightClick": "Cycle Wand Attunement"
 }

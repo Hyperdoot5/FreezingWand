@@ -1,6 +1,6 @@
 package hyperdoot5.freezingwand.init;
 
-import hyperdoot5.freezingwand.item.recipe.FreezingWandRepairRecipe;
+import hyperdoot5.freezingwand.item.repair.FreezingWandRepairRecipe;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.item.crafting.SimpleCraftingRecipeSerializer;

@@ -1,29 +1,29 @@
 {
   "parent": "freezingwand:progress_blue_ice",
   "criteria": {
-  "freezing_wand_complete": {
-    "conditions": {
-      "ingredients": [
-        {
-          "items": "minecraft:ice"
-        },
-        {
-          "items": "minecraft:ice"
-        },
-        {
-          "items": "minecraft:blue_ice"
-        },
-        {
-          "items": "minecraft:blue_ice"
-        },
-        {
-          "items": "minecraft:packed_ice"
-        }
-      ],
-      "recipe_id": "freezingwand:freezing_wand"
-    },
-    "trigger": "minecraft:recipe_crafted"
-  }
+    "freezing_wand_crafted": {
+      "conditions": {
+        "ingredients": [
+          {
+            "items": "minecraft:ice"
+          },
+          {
+            "items": "minecraft:ice"
+          },
+          {
+            "items": "minecraft:blue_ice"
+          },
+          {
+            "items": "minecraft:blue_ice"
+          },
+          {
+            "items": "minecraft:packed_ice"
+          }
+        ],
+        "recipe_id": "freezingwand:freezing_wand"
+      },
+      "trigger": "minecraft:recipe_crafted"
+    }
   },
   "display": {
     "description": {
@@ -40,7 +40,7 @@
   },
   "requirements": [
     [
-      "freezing_wand_complete"
+      "freezing_wand_crafted"
     ]
   ],
   "rewards": {

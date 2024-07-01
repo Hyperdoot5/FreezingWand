@@ -3,7 +3,6 @@ package hyperdoot5.freezingwand.init;
 import hyperdoot5.freezingwand.item.FreezingWandItem;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.world.item.Item;
-import net.minecraft.world.item.Rarity;
 import net.neoforged.neoforge.registries.DeferredItem;
 import net.neoforged.neoforge.registries.DeferredRegister;
 
@@ -16,7 +15,6 @@ public class FWItems {
     // Item registering
     public static final DeferredItem<Item> FREEZING_WAND = ITEMS.register(
             "freezing_wand", () -> new FreezingWandItem(new Item.Properties()
-                    .durability(100)
-                    .component(DataComponents.ENCHANTMENT_GLINT_OVERRIDE, true)
-                    .rarity(Rarity.RARE)));
+                    .durability(250)
+                    .component(DataComponents.ENCHANTMENT_GLINT_OVERRIDE, true)));
 }
