@@ -11,5 +11,5 @@
   "advancement.freezingwand.progress_blue_ice.desc": "Obtain Blue Ice",
   "advancement.freezingwand.progress_blue_ice": "A Dense Cold",
   "key.categories.freezingwand.freezingwand": "Freezing Wand",
-  "key.freezingwand.shift_rightClick": "Cycle Wand Attunement"
+  "key.freezingwand.attunement": "Cycle Wand Attunement"
 }

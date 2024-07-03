@@ -1,71 +1,58 @@
 package hyperdoot5.freezingwand.client;
 
-import com.mojang.logging.LogUtils;
+import hyperdoot5.freezingwand.init.FWDataComponents;
 import hyperdoot5.freezingwand.init.FWItems;
-import net.minecraft.client.Minecraft;
-import net.minecraft.core.BlockPos;
-import net.minecraft.core.Direction;
-import net.minecraft.server.level.ServerLevel;
-import net.minecraft.world.InteractionHand;
-import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.Items;
-import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.Blocks;
-import net.minecraft.world.level.block.entity.BlockEntity;
-import net.minecraft.world.level.block.state.BlockState;
+import hyperdoot5.freezingwand.item.FreezingWandItem;
+import net.minecraft.client.renderer.item.ItemProperties;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.client.event.*;
-import net.neoforged.neoforge.event.level.BlockEvent;
-import org.jetbrains.annotations.NotNull;
-import org.slf4j.Logger;
-
-import javax.annotation.Nullable;
 
 import static hyperdoot5.freezingwand.FreezingWandMod.MODID;
 
-////Events that are only on client side
-//@EventBusSubscriber(modid = MODID)
-//public class FWClientEvents {
-//    //debug
-//    private static final Logger DEBUG = LogUtils.getLogger();
-//}
-    //    public void onPlayerShiftLeftClick(Player player, InteractionHand hand, BlockPos pos, @Nullable Direction face){
-//        Level level = player.level();
-//        ItemStack itemInHand = player.getItemInHand(InteractionHand.MAIN_HAND);
-//        BlockState blockAtPos = level.getBlockState(pos);
-//        if (itemInHand == FWItems.FREEZING_WAND.toStack()){
-//            if (player.isShiftKeyDown() && !level.isClientSide()){
-//                level.setBlock(pos, Blocks.AIR.defaultBlockState(), 3);
-//                player.spawnAtLocation(Items.ICE.getDefaultInstance());
-//            }
-//        }
-//    }
-//}
+//Events that are only on client side, not mod bus
+@EventBusSubscriber(modid = MODID, value = Dist.CLIENT)
+public class FWClientEvents {
 
-//    //Events that must be on modEventBus
-//    @EventBusSubscriber(modid = MODID, bus = EventBusSubscriber.Bus.MOD, value = Dist.CLIENT)
-//    public static class ModBusEvents {
-//
-//    }
+    //Events that must be on modEventBus
+    @EventBusSubscriber(modid = MODID, bus = EventBusSubscriber.Bus.MOD, value = Dist.CLIENT)
+    public static class ModBusEvents {
+        @SubscribeEvent
+        public static void modelBake(ModelEvent.ModifyBakingResult event){
+            ItemProperties.register(FWItems.FREEZING_WAND.get(), FreezingWandItem.BASIC, (stack, level, entity, idk) ->
+                    stack.get(FWDataComponents.FREEZING_WAND_ATTUNEMENTS) != null && stack.get(FWDataComponents.FREEZING_WAND_ATTUNEMENTS).equals("basic") ? 1 : 0);
+            ItemProperties.register(FWItems.FREEZING_WAND.get(), FreezingWandItem.ICE, (stack, level, entity, idk) ->
+                    stack.get(FWDataComponents.FREEZING_WAND_ATTUNEMENTS) != null && stack.get(FWDataComponents.FREEZING_WAND_ATTUNEMENTS).equals("ice") ? 1 : 0);
+            ItemProperties.register(FWItems.FREEZING_WAND.get(), FreezingWandItem.PACKED_ICE, (stack, level, entity, idk) ->
+                    stack.get(FWDataComponents.FREEZING_WAND_ATTUNEMENTS) != null && stack.get(FWDataComponents.FREEZING_WAND_ATTUNEMENTS).equals("packed_ice") ? 1 : 0);
+            ItemProperties.register(FWItems.FREEZING_WAND.get(), FreezingWandItem.BLUE_ICE, (stack, level, entity, idk) ->
+                    stack.get(FWDataComponents.FREEZING_WAND_ATTUNEMENTS) != null && stack.get(FWDataComponents.FREEZING_WAND_ATTUNEMENTS).equals("blue_ice") ? 1 : 0);
+        }
+    }
+}
 
-//    public static void breakBlock(BlockEvent.BreakEvent event) {
-//        Player player = event.getPlayer();
-//        ItemStack itemInHand = player.getItemInHand(InteractionHand.MAIN_HAND);
-//        BlockPos blockPos = event.getPos();
-//        BlockState blockState = event.getState();
-//        BlockState air = Blocks.AIR.defaultBlockState();
-//
-//        if (itemInHand == FWItems.FREEZING_WAND.toStack()) {
-//            DEBUG.info("a");
-//
-//            if (!(event.getLevel() instanceof ServerLevel level) || level.isClientSide()) return;
-//
-//            event.getLevel().setBlock(blockPos, air, 3);
-//            player.spawnAtLocation(Items.ICE.getDefaultInstance());
-//            DEBUG.info("sports");
-//        }
-//    }
-//}
+/*
+    event.enqueueWork(() -> { // ItemProperties#register is not threadsafe, so we need to call it on the main thread
+        ItemProperties.register(
+        // The item to apply the property to.
+        FWItems.FREEZING_WAND.asItem(),
+// The id of the property.
+                    ResourceLocation.fromNamespaceAndPath(MODID, "custom_model_data"),
+// A reference to a method that calculates the override value.
+// Parameters are the used item stack, the level context, the player using the item,
+// and a random seed you can use.
+                    (stack, level, player, seed) -> {
+        if (blockSelPos == 1){
+        return 1F;
+        } else if (blockSelPos == 2) {
+        return 2F;
+        } else if (blockSelPos == 3) {
+        return 3F;
+        }
+        return 0F;
+        }
+        );
+        });
+
+ */

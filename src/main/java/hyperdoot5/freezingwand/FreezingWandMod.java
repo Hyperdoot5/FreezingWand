@@ -1,92 +1,100 @@
 package hyperdoot5.freezingwand;
 
-import com.mojang.datafixers.types.templates.Check;
 import com.mojang.logging.LogUtils;
-import hyperdoot5.freezingwand.init.FWRecipes;
-import hyperdoot5.freezingwand.item.repair.FWAnvilRepairHandler;
-import hyperdoot5.freezingwand.util.CheckChunkUtil;
+import hyperdoot5.freezingwand.init.*;
+import hyperdoot5.freezingwand.item.FreezingWandItem;
 import net.minecraft.client.Minecraft;
 import net.minecraft.resources.ResourceLocation;
-import net.neoforged.api.distmarker.Dist;
+import net.minecraft.world.entity.player.Player;
 import net.neoforged.bus.api.IEventBus;
-import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.ModContainer;
-import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.fml.common.Mod;
 import net.neoforged.fml.config.ModConfig;
-import net.neoforged.fml.event.lifecycle.FMLClientSetupEvent;
 import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
 
-import net.neoforged.neoforge.common.NeoForge;
-import net.neoforged.neoforge.event.server.ServerStartingEvent;
+import net.neoforged.neoforge.client.event.ClientTickEvent;
+import net.neoforged.neoforge.network.event.RegisterPayloadHandlersEvent;
+import net.neoforged.neoforge.network.registration.PayloadRegistrar;
+import org.apache.logging.log4j.LogManager;
 import org.slf4j.Logger;
 
 import java.util.Locale;
 
-import static hyperdoot5.freezingwand.init.FWCreativeTabs.CREATIVE_MODE_TABS;
-import static hyperdoot5.freezingwand.init.FWItems.ITEMS;
+import static hyperdoot5.freezingwand.client.FWKeyMapHandler.FREEZING_WAND_ATTUNEMENT;
 
+/*
+* NOTICE
+*
+* Eventhough in the world of programming there is a lot of copy & paste of what works,
+* I would like to give credit to the TwilightForestMod for its inspiration, many solutions, and general mod structuring,
+*
+* I saw what worked and what was readable and decided if it aint broke, dont fix it
+* as such many naming schemes are similar
+*
+*/
 
-// The value here should match an entry in the META-INF/neoforge.mods.toml file
 @Mod(FreezingWandMod.MODID)
-public class FreezingWandMod
-{
-    // Define mod id in a common place for everything to reference
+public class FreezingWandMod {
     public static final String MODID = "freezingwand";
-    private static final Logger LOGGER = LogUtils.getLogger();
 
-    public FreezingWandMod(IEventBus modEventBus, ModContainer modContainer)
-    {
+    public static final Logger DEBUG = LogUtils.getLogger();
 
-        // Register the commonSetup method for modloading
-        modEventBus.addListener(this::commonSetup);
+    public FreezingWandMod(IEventBus modEventBus, ModContainer modContainer) {
 
-        // Register the Deferred Register to the mod event bus so items get registered
-        ITEMS.register(modEventBus);
-        // Register the Deferred Register to the mod event bus so tabs get registered
-        CREATIVE_MODE_TABS.register(modEventBus);
-        // Register the Deferred Register to the mod even bus so Custom Recipes get registered
-        FWRecipes.RECIPE_SERIALIZERS.register(modEventBus);
-        // Register AnvileHandler for anvil repair
-        NeoForge.EVENT_BUS.register(new FWAnvilRepairHandler());
+        // Register the init method for modloading
+        modEventBus.addListener(this::init);
 
-        // Register *this* for quirky setup logs
-        NeoForge.EVENT_BUS.register(this);
-        // Register our mod's ModConfigSpec so that FML can create and load the config file for us
-        modContainer.registerConfig(ModConfig.Type.COMMON, Config.SPEC);
+        FWItems.ITEMS.register(modEventBus); // Register the Deferred Register to the mod event bus so items get registered
+        FWCreativeTabs.CREATIVE_MODE_TABS.register(modEventBus); // Register the Deferred Register to the mod event bus so tabs get registered
+        FWRecipes.RECIPE_SERIALIZERS.register(modEventBus); // Register the Deferred Register to the mod event bus so custom recipes get registered
+        FWStats.STATS.register(modEventBus); // Register the Deffered Register to the mod event bus so custom stats get registered
+        FWDataComponents.COMPONENTS.register(modEventBus);
+
+
+
+        modContainer.registerConfig(ModConfig.Type.COMMON, Config.SPEC); // Register our mod's ModConfigSpec so that FML can create and load the config file for us
+
+        //Register for quirky server setup logs
+//        NeoForge.EVENT_BUS.register(this);
     }
 
-    private void commonSetup(final FMLCommonSetupEvent event)
-    {
-        // Some common setup code
-        LOGGER.info("Freezing Wand Setup Initiated");
-
-        Config.items.forEach((item) -> LOGGER.info("ITEM >> {}", item.toString()));
+    private void init(final FMLCommonSetupEvent event) {
+        DEBUG.info("Freezing Wand Common Setup Initiated");
+        event.enqueueWork(FWStats::init); // Not threadsafe, put on main thread
     }
+//
+//     The constructor for the mod class is the first code that is run when your mod is loaded.
+//     FML will recognize some parameter types like IEventBus or ModContainer and pass them in automatically.
+//     You can use SubscribeEvent and let the Event Bus discover methods to call
+//    @SubscribeEvent
+//    public void onServerStarting(ServerStartingEvent event) {
+//        // Do something when the server starts
+//        DEBUG.info("Freezing Wand Acknowledges the Server");
+//    }
 
-    // The constructor for the mod class is the first code that is run when your mod is loaded.
-    // FML will recognize some parameter types like IEventBus or ModContainer and pass them in automatically.
-        // You can use SubscribeEvent and let the Event Bus discover methods to call
-        @SubscribeEvent
-        public void onServerStarting(ServerStartingEvent event)
-        {
-            // Do something when the server starts
-            LOGGER.info("Freezing Wand Acknowledges the Server");
-        }
-        // You can use EventBusSubscriber to automatically register all static methods in the class annotated with @SubscribeEvent
-        @EventBusSubscriber(modid = MODID, bus = EventBusSubscriber.Bus.MOD, value = Dist.CLIENT)
-        public static class ClientModEvents
-        {
-            @SubscribeEvent
-            public static void onClientSetup(FMLClientSetupEvent event) {
-
-                // Some client setup code
-                LOGGER.info("Freezing Wand Acknowledges the Client");
-                LOGGER.info("MINECRAFT NAME >> {}", Minecraft.getInstance().getUser().getName());
+        // works as intended
+        private static void checkAttunment(ClientTickEvent.Post event){
+            Minecraft mc = Minecraft.getInstance();
+            Player player = mc.player;
+            while (FREEZING_WAND_ATTUNEMENT.get().consumeClick()) {
+                if (player != null && player.getMainHandItem().getItem() instanceof FreezingWandItem) {
+                    DEBUG.info("Model...");
+                }
             }
-
         }
+        // does not work as intended
+        private static float getAttunment(){
+            DEBUG.info("...Changed");
+            return 1;
+        }
+//    public void setupPackets(RegisterPayloadHandlersEvent event){
+//        PayloadRegistrar registrar = event.registrar(MODID).versioned("1.0.0").optional();
+//        registrar.playToClient(UpdateThrownPacket.TYPE, UpdateThrownPacket.STREAM_CODEC, UpdateThrownPacket::handle);
+//        registrar.playToServer(WipeOreMeterPacket.TYPE, WipeOreMeterPacket.STREAM_CODEC, WipeOreMeterPacket::handle);
+//        registrar.playToClient(ParticlePacket.TYPE, ParticlePacket.STREAM_CODEC, ParticlePacket::handle);
+//    }
     public static ResourceLocation prefix(String name) {
         return ResourceLocation.fromNamespaceAndPath(MODID, name.toLowerCase(Locale.ROOT));
     }
 }
+

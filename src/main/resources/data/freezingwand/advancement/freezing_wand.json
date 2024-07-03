@@ -23,6 +23,16 @@
         "recipe_id": "freezingwand:freezing_wand"
       },
       "trigger": "minecraft:recipe_crafted"
+    },
+    "has_wand": {
+      "conditions": {
+        "items": [
+          {
+            "items": "freezingwand:freezing_wand"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
     }
   },
   "display": {
@@ -41,6 +51,9 @@
   "requirements": [
     [
       "freezing_wand_crafted"
+    ],
+    [
+      "has_wand"
     ]
   ],
   "rewards": {
