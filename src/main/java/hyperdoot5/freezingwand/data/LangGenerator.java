@@ -1,8 +1,6 @@
 package hyperdoot5.freezingwand.data;
 
 import hyperdoot5.freezingwand.data.helpers.FWLangProvider;
-import hyperdoot5.freezingwand.data.tags.FluidTagGenerator;
-import hyperdoot5.freezingwand.data.tags.ItemTagGenerator;
 import hyperdoot5.freezingwand.init.*;
 import com.mojang.datafixers.util.Pair;
 import net.minecraft.data.PackOutput;
@@ -12,10 +10,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class LangGenerator extends FWLangProvider {
-/*
-//                "item.freezingwand.desc": "Epic Description", move to tags
-
-*/
     public static final Map<String, String> SUBTITLE_GENERATOR = new HashMap<>();
 
     public LangGenerator(PackOutput output) {
@@ -26,7 +20,6 @@ public class LangGenerator extends FWLangProvider {
     protected void addTranslations() {
 
         this.add("itemGroup.freezingwand", "Freezing Wand: Wand");
-
 //        this.add("effect.freezingwand.frosted", "Frosted");
 
         this.addAdvancement("root", "Freezing Wand", "Start gathering materials to craft the Freezing Wand by obtaining Ice");
@@ -41,10 +34,11 @@ public class LangGenerator extends FWLangProvider {
 //        this.addMessage("ore_meter_range", "Radius: %s, Origin: [%s, %s]");
 
         this.addItem(FWItems.FREEZING_WAND, "Freezing Wand");
-        this.add("item.freezingwand.freezing_wand.basic", "Base Wand");
-        this.add("item.freezingwand.freezing_wand.ice", "Ice Wand");
-        this.add("item.freezingwand.freezing_wand.packed_ice", "Packed Ice Wand");
-        this.add("item.freezingwand.freezing_wand.blue_ice", "Blue Ice Wand");
+		this.add("item.freezingwand.desc.basic_attunement", "Attunement: Ranged");
+		this.add("item.freezingwand.desc.ice_attunement", "Attunement: Ice");
+		this.add("item.freezingwand.desc.packed_ice_attunement", "Attunement: Packed Ice");
+		this.add("item.freezingwand.desc.blue_ice_attunement", "Attunement: Blue Ice");
+		this.add("item.freezingwand.desc.null", "Unattuned Wand");
 
 //        this.add("item.freezingwand.skull_candle.desc", "Has: %s %s Candle");
 //        this.add("item.freezingwand.skull_candle.desc.multiple", "Has: %s %s Candles");
@@ -75,11 +69,15 @@ public class LangGenerator extends FWLangProvider {
 //        this.addScreenMessage("optifine.title", "WARNING: OPTIFINE DETECTED");
 //        this.addScreenMessage("optifine.message", "Before proceeding, please note that Optifine is known to cause crashes, multipart entity visual bugs and many other issues.\n\nBefore reporting a bug, please remove Optifine first and check again to see if the bug is still present.\n\nOptifine-related issues are not solvable on Twilight Forest's end!\n\nThis screen may be disabled in the Client Config.");
 //        this.addScreenMessage("optifine.suggestions", "Here's a selection of mods that we recommend using instead.");
-        this.addScreenMessage("moonworm_queen_jei", "Moonworm Queen Repairing");
-        this.add("item.freezingwand.moonworm_queen.jei_info_message", "Torchberries restore 64 durability each");
+//        this.addScreenMessage("moonworm_queen_jei", "Moonworm Queen Repairing");
+//        this.add("item.freezingwand.moonworm_queen.jei_info_message", "Torchberries restore 64 durability each");
 
         this.add("key.categories.freezingwand.freezingwand", "Freezing Wand");
         this.add("key.freezingwand.attunement", "Cycle Wand Attunement");
+		this.add("key.freezingwand.basic", "Ranged Attunement");
+		this.add("key.freezingwand.ice", "Ice Attunement");
+		this.add("key.freezingwand.packed_ice", "Packed Ice Attunement");
+		this.add("key.freezingwand.blue_ice", "Blue Ice Attunement");
 //        this.createTip("anvil_squashing", "Bugs can be squashed by Anvils.");
 
 

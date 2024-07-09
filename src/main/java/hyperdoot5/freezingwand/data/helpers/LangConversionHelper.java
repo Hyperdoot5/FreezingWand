@@ -116,7 +116,7 @@ public class LangConversionHelper {
             if (component instanceof LangFormatSplitter.FormatComponent formatComponent) {
                 //Insert the full code directly
                 converted.append(convertFormattingComponent(formatComponent, curIndex--, numArguments));
-            } else {
+			} else {
                 //Convert each character to being upside down and then insert at end
                 char[] toConvertArr = component.contents().toCharArray();
                 for (int j = toConvertArr.length - 1; j >= 0; j--) {

@@ -1,0 +1,6 @@
+{
+  "parent": "minecraft:item/handheld",
+  "textures": {
+    "layer0": "freezingwand:item/freezing_wand/blue_ice"
+  }
+}

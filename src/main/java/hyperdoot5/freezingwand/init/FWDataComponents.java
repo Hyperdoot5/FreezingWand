@@ -16,7 +16,7 @@ import static hyperdoot5.freezingwand.FreezingWandMod.MODID;
 public class FWDataComponents {
     public static final DeferredRegister<DataComponentType<?>> COMPONENTS = DeferredRegister.createDataComponents(MODID);
 
-    public static final DeferredHolder<DataComponentType<?>, DataComponentType<String>> FREEZING_WAND_ATTUNEMENTS = COMPONENTS.register("freezing_wand_attunement", () -> DataComponentType.<String>builder().persistent(Codec.STRING).networkSynchronized(ByteBufCodecs.STRING_UTF8).build());
+	public static final DeferredHolder<DataComponentType<?>, DataComponentType<String>> WAND_ATTUNEMENT = COMPONENTS.register("wand_attunement", () -> DataComponentType.<String>builder().persistent(Codec.STRING).networkSynchronized(ByteBufCodecs.STRING_UTF8).build());
 
     private static @NotNull <T> DeferredHolder<DataComponentType<?>, DataComponentType<T>> register(String name, final Codec<T> codec) {
         return register(name, codec, null);

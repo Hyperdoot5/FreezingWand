@@ -1,5 +1,6 @@
 package hyperdoot5.freezingwand.client;
 
+import hyperdoot5.freezingwand.FreezingWandMod;
 import hyperdoot5.freezingwand.init.FWDataComponents;
 import hyperdoot5.freezingwand.init.FWItems;
 import hyperdoot5.freezingwand.item.FreezingWandItem;
@@ -9,27 +10,30 @@ import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.client.event.*;
 
+import java.util.Objects;
+
 import static hyperdoot5.freezingwand.FreezingWandMod.MODID;
 
-//Events that are only on client side, not mod bus
-@EventBusSubscriber(modid = MODID, value = Dist.CLIENT)
+////Events that are only on client side, not mod bus
+@EventBusSubscriber(modid = MODID, bus = EventBusSubscriber.Bus.MOD, value = Dist.CLIENT)
 public class FWClientEvents {
 
-    //Events that must be on modEventBus
-    @EventBusSubscriber(modid = MODID, bus = EventBusSubscriber.Bus.MOD, value = Dist.CLIENT)
-    public static class ModBusEvents {
+	//    //Events that must be on modEventBus
+//    @EventBusSubscriber(modid = MODID, bus = EventBusSubscriber.Bus.MOD, value = Dist.CLIENT)
+//    public static class ModBusEvents {
         @SubscribeEvent
         public static void modelBake(ModelEvent.ModifyBakingResult event){
-            ItemProperties.register(FWItems.FREEZING_WAND.get(), FreezingWandItem.BASIC, (stack, level, entity, idk) ->
-                    stack.get(FWDataComponents.FREEZING_WAND_ATTUNEMENTS) != null && stack.get(FWDataComponents.FREEZING_WAND_ATTUNEMENTS).equals("basic") ? 1 : 0);
-            ItemProperties.register(FWItems.FREEZING_WAND.get(), FreezingWandItem.ICE, (stack, level, entity, idk) ->
-                    stack.get(FWDataComponents.FREEZING_WAND_ATTUNEMENTS) != null && stack.get(FWDataComponents.FREEZING_WAND_ATTUNEMENTS).equals("ice") ? 1 : 0);
-            ItemProperties.register(FWItems.FREEZING_WAND.get(), FreezingWandItem.PACKED_ICE, (stack, level, entity, idk) ->
-                    stack.get(FWDataComponents.FREEZING_WAND_ATTUNEMENTS) != null && stack.get(FWDataComponents.FREEZING_WAND_ATTUNEMENTS).equals("packed_ice") ? 1 : 0);
-            ItemProperties.register(FWItems.FREEZING_WAND.get(), FreezingWandItem.BLUE_ICE, (stack, level, entity, idk) ->
-                    stack.get(FWDataComponents.FREEZING_WAND_ATTUNEMENTS) != null && stack.get(FWDataComponents.FREEZING_WAND_ATTUNEMENTS).equals("blue_ice") ? 1 : 0);
-        }
-    }
+			ItemProperties.register(FWItems.FREEZING_WAND.get(), FreezingWandItem.BASIC, (stack, level, entity, idk) ->
+				stack.get(FWDataComponents.WAND_ATTUNEMENT) != null && Objects.equals(stack.get(FWDataComponents.WAND_ATTUNEMENT), "basic_attunement") ? 1 : 0);
+			ItemProperties.register(FWItems.FREEZING_WAND.get(), FreezingWandItem.ICE, (stack, level, entity, idk) ->
+				stack.get(FWDataComponents.WAND_ATTUNEMENT) != null && Objects.equals(stack.get(FWDataComponents.WAND_ATTUNEMENT), "ice_attunement") ? 1 : 0);
+			ItemProperties.register(FWItems.FREEZING_WAND.get(), FreezingWandItem.PACKED_ICE, (stack, level, entity, idk) ->
+				stack.get(FWDataComponents.WAND_ATTUNEMENT) != null && Objects.equals(stack.get(FWDataComponents.WAND_ATTUNEMENT), "packed_ice_attunement") ? 1 : 0);
+			ItemProperties.register(FWItems.FREEZING_WAND.get(), FreezingWandItem.BLUE_ICE, (stack, level, entity, idk) ->
+				stack.get(FWDataComponents.WAND_ATTUNEMENT) != null && Objects.equals(stack.get(FWDataComponents.WAND_ATTUNEMENT), "blue_ice_attunement") ? 1 : 0);
+
+		}
+//    }
 }
 
 /*

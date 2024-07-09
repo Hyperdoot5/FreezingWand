@@ -1,206 +1,270 @@
 package hyperdoot5.freezingwand.item;
 
-import com.mojang.logging.LogUtils;
-import hyperdoot5.freezingwand.init.FWItems;
-import hyperdoot5.freezingwand.init.FWStats;
+import hyperdoot5.freezingwand.enchantment.ApplyFrostedEffect;
+import hyperdoot5.freezingwand.entity.projectile.IceBomb;
+import hyperdoot5.freezingwand.init.*;
+import hyperdoot5.freezingwand.network.ParticlePacket;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.core.component.DataComponents;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
+import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
+import net.minecraft.world.InteractionResultHolder;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EquipmentSlot;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.TooltipFlag;
-import net.minecraft.world.item.component.CustomModelData;
 import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.Fluid;
 import net.minecraft.world.level.material.Fluids;
+import net.minecraft.world.level.saveddata.maps.MapItemSavedData;
 import net.neoforged.neoforge.items.ItemHandlerHelper;
+import net.neoforged.neoforge.network.PacketDistributor;
 import org.checkerframework.checker.nullness.qual.NonNull;
-import org.slf4j.Logger;
+
+import java.util.List;
+import java.util.Optional;
 
 import static hyperdoot5.freezingwand.FreezingWandMod.DEBUG;
 import static hyperdoot5.freezingwand.FreezingWandMod.prefix;
-
-import java.util.List;
-
-//import static hyperdoot5.freezingwand.client.FWClientEvents.replaceBlock;
-
+import static hyperdoot5.freezingwand.util.AttunementUtil.*;
 
 public class FreezingWandItem extends Item {
-    public static final ResourceLocation BASIC = prefix("basic");
-    public static final ResourceLocation ICE = prefix("ice");
-    public static final ResourceLocation PACKED_ICE = prefix("packed_ice");
-    public static final ResourceLocation BLUE_ICE = prefix("blue_ice");
+	public static final ResourceLocation BASIC = prefix("basic_attunement");
+	public static final ResourceLocation ICE = prefix("ice_attunement");
+	public static final ResourceLocation PACKED_ICE = prefix("packed_ice_attunement");
+	public static final ResourceLocation BLUE_ICE = prefix("blue_ice_attunement");
 
-    public FreezingWandItem(Properties properties) {
-        super(properties);
-    }
-    int blockSelPos = 1;
-    //Item Functionality
-    @Override
-    public InteractionResult useOn(UseOnContext context) {
-        // Variables for readability
-        Player player = context.getPlayer();
-        Level level = context.getLevel();
-        Fluid water_flowing = Fluids.FLOWING_WATER.getFlowing();
-        Fluid water_source = Fluids.WATER.getSource();
-        BlockState ice_block = Blocks.ICE.defaultBlockState();
-        BlockState packed_ice = Blocks.PACKED_ICE.defaultBlockState();
-        BlockState blue_ice = Blocks.BLUE_ICE.defaultBlockState();
-        BlockState snow_block = Blocks.SNOW_BLOCK.defaultBlockState();
-        ItemStack ice_item = Items.ICE.getDefaultInstance();
-        ItemStack packed_ice_item = Items.PACKED_ICE.getDefaultInstance();
-        ItemStack blue_ice_item = Items.BLUE_ICE.getDefaultInstance();
-        BlockPos clickedPos = context.getClickedPos();
-        Direction cardinalDirection = context.getClickedFace();
-        BlockState blockClicked = level.getBlockState(clickedPos);
-        Fluid cardinalFluid = level.getFluidState(clickedPos.relative(cardinalDirection)).getType();
+	public FreezingWandItem(Properties properties) {
+		super(properties);
+	}
 
-        //vars for selecting what ice block to place and collect
-        BlockState selectedBlock = Blocks.ICE.defaultBlockState();
-        ItemStack selectedItem = Items.ICE.getDefaultInstance();;
-        boolean placedBlock = false;
-        boolean replacedBlock = false;
-        boolean iceCollected = false;
+	//    int blockSelPos = 1;
+	//Item Functionality
+	@Override
+	public InteractionResult useOn(UseOnContext context) {
+		if (getAttunement() != 0) {
+			// Variables for readability
+			Player player = context.getPlayer();
+			Level level = context.getLevel();
+			Fluid water_flowing = Fluids.FLOWING_WATER.getFlowing();
+			Fluid water_source = Fluids.WATER.getSource();
+			BlockState ice_block = Blocks.ICE.defaultBlockState();
+			BlockState packed_ice = Blocks.PACKED_ICE.defaultBlockState();
+			BlockState blue_ice = Blocks.BLUE_ICE.defaultBlockState();
+			BlockState snow_block = Blocks.SNOW_BLOCK.defaultBlockState();
+			ItemStack ice_item = Items.ICE.getDefaultInstance();
+			ItemStack packed_ice_item = Items.PACKED_ICE.getDefaultInstance();
+			ItemStack blue_ice_item = Items.BLUE_ICE.getDefaultInstance();
+			BlockPos clickedPos = context.getClickedPos();
+			Direction cardinalDirection = context.getClickedFace();
+			BlockState blockClicked = level.getBlockState(clickedPos);
+			Fluid cardinalFluid = level.getFluidState(clickedPos.relative(cardinalDirection)).getType();
+
+			//vars for selecting what ice block to place and collect
+			BlockState selectedBlock = Blocks.ICE.defaultBlockState();
+			ItemStack selectedItem = Items.ICE.getDefaultInstance();
+			;
+			boolean placedBlock = false;
+			boolean replacedBlock = false;
+			boolean iceCollected = false;
 
 
-        // check if can place
-        if (blockClicked == ice_block
-                || blockClicked == packed_ice
-                || blockClicked == blue_ice
-                || blockClicked == snow_block
-                || cardinalFluid == water_source
-                || cardinalFluid == water_flowing) {
-            placedBlock = true;
-        }
-        if (blockSelPos == 4){blockSelPos = 1;}
-        // change selected block
-        switch(blockSelPos){
-            case 1 -> {
-                selectedBlock = ice_block;
-                selectedItem = ice_item;
-            }
-            case 2 -> {
-                selectedBlock = packed_ice;
-                selectedItem = packed_ice_item;
-            }
-            case 3 -> {
-                selectedBlock = blue_ice;
-                selectedItem = blue_ice_item;
-            }
-        }
+			// check if can place
+			if (blockClicked == ice_block
+				|| blockClicked == packed_ice
+				|| blockClicked == blue_ice
+				|| blockClicked == snow_block
+				|| cardinalFluid == water_source
+				|| cardinalFluid == water_flowing) {
+				placedBlock = true;
+			}
+//        if (blockSelPos == 4) blockSelPos = 1;
+			// change selected block
 
-        // LOGICAL SERVER SIDE EVENT
-        //if try to place on a valid block, place selectedblock
-        if (!level.isClientSide && player != null) {
-            if (player.isShiftKeyDown() && blockClicked == selectedBlock) {
-                level.setBlock(clickedPos, Blocks.AIR.defaultBlockState(), 3);
-                ItemHandlerHelper.giveItemToPlayer(player, new ItemStack(selectedItem.getItem()));
-                iceCollected = true;
-            } else if (placedBlock) {
-                switch (cardinalDirection) {
-                    case UP -> level.setBlock(clickedPos.relative(Direction.UP), selectedBlock, 3);
-                    case DOWN -> level.setBlock(clickedPos.relative(Direction.DOWN), selectedBlock, 3);
-                    case NORTH -> level.setBlock(clickedPos.relative(Direction.NORTH), selectedBlock, 3);
-                    case EAST -> level.setBlock(clickedPos.relative(Direction.EAST), selectedBlock, 3);
-                    case SOUTH -> level.setBlock(clickedPos.relative(Direction.SOUTH), selectedBlock, 3);
-                    case WEST -> level.setBlock(clickedPos.relative(Direction.WEST), selectedBlock, 3);
-                }
-                // if player is holding shift when rclick, replace the block they click
-            } else if (player.isShiftKeyDown()) {
-                level.setBlock(clickedPos, selectedBlock, 3);
-                replacedBlock = true;
-            }
-        }
-        // PHYSICAL CLIENT SIDE EVENT
-        //damage wand & play block place sound
-        if (placedBlock) {
-            // Varywand damage if not building directly from water source or flowing water
-            if ((cardinalFluid == water_source) || (cardinalFluid == water_flowing)) {
-                assert player != null;
-                context.getItemInHand().hurtAndBreak(0, player, EquipmentSlot.MAINHAND);
-            } else if (blockClicked != snow_block) {
-                assert player != null;
-                context.getItemInHand().hurtAndBreak(2, player, EquipmentSlot.MAINHAND);
-            } else {
-                assert player != null;
-                context.getItemInHand().hurtAndBreak(5, player, EquipmentSlot.MAINHAND);
-            }
-            level.playSound(player, clickedPos, SoundEvents.STONE_PLACE, SoundSource.PLAYERS);
-            return InteractionResult.SUCCESS;
-        } else if (replacedBlock) {
-            context.getItemInHand().hurtAndBreak(10, player, EquipmentSlot.MAINHAND);
-            level.playSound(player, clickedPos, SoundEvents.AXOLOTL_SPLASH, SoundSource.PLAYERS);
+			switch (getAttunement()) {
+				case 1 -> {
+					selectedBlock = ice_block;
+					selectedItem = ice_item;
+				}
+				case 2 -> {
+					selectedBlock = packed_ice;
+					selectedItem = packed_ice_item;
+				}
+				case 3 -> {
+					selectedBlock = blue_ice;
+					selectedItem = blue_ice_item;
+				}
+			}
 
-            return InteractionResult.SUCCESS;
-        } else if (iceCollected) {
-            switch(blockSelPos){
-                case 1 -> {
-                    context.getItemInHand().hurtAndBreak(1, player, EquipmentSlot.MAINHAND);
-                    player.awardStat(FWStats.ICE_COLLECTED.get());
-                }
-                case 2 -> {
-                    context.getItemInHand().hurtAndBreak(10, player, EquipmentSlot.MAINHAND);
-                    player.awardStat(FWStats.PACKED_ICE_COLLECTED.get());
-                }
-                case 3 -> {
-                    context.getItemInHand().hurtAndBreak(100, player, EquipmentSlot.MAINHAND);
-                    player.awardStat(FWStats.BLUE_ICE_COLLECTED.get());
-                }
-            }
-            level.playSound(player, clickedPos, SoundEvents.EXPERIENCE_ORB_PICKUP, SoundSource.PLAYERS);
-            return InteractionResult.SUCCESS;
-        } else {
-            if(level.isClientSide && player != null && !player.isShiftKeyDown()) {
-                String message = "The wand changes attunement";
-                player.sendSystemMessage(Component.translatable(message));
-                level.playSound(player, clickedPos, SoundEvents.AMETHYST_BLOCK_CHIME, SoundSource.PLAYERS);
-            }
-            // Cannot have inside above if statement -> for server compatability);
-            blockSelPos++;
-            return InteractionResult.PASS;
-        }
-    }
+			// LOGICAL SERVER SIDE EVENT
+			//if try to place on a valid block, place selectedblock
+			if (!level.isClientSide && player != null) {
+				if (player.isShiftKeyDown() && blockClicked == selectedBlock) {
+					level.setBlock(clickedPos, Blocks.AIR.defaultBlockState(), 3);
+					ItemHandlerHelper.giveItemToPlayer(player, new ItemStack(selectedItem.getItem()));
+					iceCollected = true;
+				} else if (placedBlock) {
+					switch (cardinalDirection) {
+						case UP -> level.setBlock(clickedPos.relative(Direction.UP), selectedBlock, 3);
+						case DOWN -> level.setBlock(clickedPos.relative(Direction.DOWN), selectedBlock, 3);
+						case NORTH -> level.setBlock(clickedPos.relative(Direction.NORTH), selectedBlock, 3);
+						case EAST -> level.setBlock(clickedPos.relative(Direction.EAST), selectedBlock, 3);
+						case SOUTH -> level.setBlock(clickedPos.relative(Direction.SOUTH), selectedBlock, 3);
+						case WEST -> level.setBlock(clickedPos.relative(Direction.WEST), selectedBlock, 3);
+					}
+					// if player is holding shift when rclick, replace the block they click
+				} else if (!player.isShiftKeyDown()) {
+					level.setBlock(clickedPos, selectedBlock, 3);
+					replacedBlock = true;
+				}
+			}
+			// PHYSICAL CLIENT SIDE EVENT
+			//damage wand & play block place sound
+			if (player != null) {
+				if (placedBlock) {
 
-    // Item Properties
-    @Override
-    public boolean isEnchantable(ItemStack stack) {
-        return false;
-    }
+					// Varywand damage if not building directly from water source or flowing water
+					if ((cardinalFluid == water_source) || (cardinalFluid == water_flowing)) {
+						damageWand(0, player, context);
+					} else if (blockClicked != snow_block) {
+						damageWand(2, player, context);
+					} else {
+						damageWand(5, player, context);
+					}
+					level.playSound(player, clickedPos, FWSounds.BLOCK_PLACED.get(), SoundSource.PLAYERS);
+					return InteractionResult.SUCCESS;
 
-    @Override
-    public boolean isBookEnchantable(ItemStack stack, ItemStack book) {
-        return false;
-    }
-    // Cant break blocks with wand lol
-    @Override
-    public float getDestroySpeed(@NonNull ItemStack stack, BlockState state){
-        return 0;
-    }
-    // custom tooltip
-    @Override
-    public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> tooltip, TooltipFlag flags) {
-        super.appendHoverText(stack, context, tooltip, flags);
-        // add a way to grab the attunement to add to tooltip
-        tooltip.add(Component.translatable("item.freezingwand.desc").withStyle(ChatFormatting.GRAY));
-    }
-    /*
-    public InteractionResult interactLivingEntity(ItemStack p_41398_, Player p_41399_, LivingEntity p_41400_, InteractionHand p_41401_) {
-        return InteractionResult.PASS;
-    }
+				} else if (replacedBlock) {
 
-    public void postHurtEnemy(ItemStack p_346136_, LivingEntity p_346250_, LivingEntity p_346014_) {
-    }
-    */
+					damageWand(10, player, context);
+					level.playSound(player, clickedPos, FWSounds.BLOCK_PLACED.get(), SoundSource.PLAYERS);
+					return InteractionResult.SUCCESS;
+
+				} else if (iceCollected) {
+
+					switch (getAttunement()) {
+						case 1 -> {
+							damageWand(1, player, context);
+							player.awardStat(FWStats.ICE_COLLECTED.get());
+						}
+						case 2 -> {
+							damageWand(10, player, context);
+							player.awardStat(FWStats.PACKED_ICE_COLLECTED.get());
+						}
+						case 3 -> {
+							damageWand(100, player, context);
+							player.awardStat(FWStats.BLUE_ICE_COLLECTED.get());
+						}
+					}
+					level.playSound(player, clickedPos, FWSounds.BLOCK_COLLECTED.get(), SoundSource.PLAYERS);
+					return InteractionResult.SUCCESS;
+				}
+			}
+		}
+		return InteractionResult.PASS;
+	}
+
+	@Override
+	public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand hand) {
+		if (!player.isShiftKeyDown() && getAttunement() == 0) {
+			DEBUG.info("BOMB");
+			if (!level.isClientSide()) {
+				if (!player.getAbilities().instabuild) {
+					damageWand(20, player, hand);
+				}
+//				DEBUG.info("IceBomb");
+				IceBomb ice = new IceBomb(FWEntities.THROWN_ICE.get(), level, player);
+				ice.shootFromRotation(player, player.getXRot(), player.getYRot(), -5.0F, 1.25F, 1.0F);
+				level.addFreshEntity(ice);
+			}
+			player.playSound(FWSounds.ICE_FIRED.get(), 0.5F, 0.4F / (level.getRandom().nextFloat() * 0.4F + 0.8F));
+			player.getCooldowns().addCooldown(FWItems.FREEZING_WAND.asItem(), 20);
+		}
+		return new InteractionResultHolder<>(InteractionResult.SUCCESS, player.getItemInHand(hand));
+	}
+
+	//Dirty work around when mod loads to handle instances of null component
+	//also fixes component null after item use
+	@Override
+	public void inventoryTick(ItemStack pStack, Level pLevel, Entity pEntity, int pItemSlot, boolean pIsSelected) {
+		String component = pStack.get(FWDataComponents.WAND_ATTUNEMENT);
+		//if component != correct attunement component, then correct it
+		if (component != null) {
+			if (!isCorrectComponent(component)) {
+				setComponent(pStack);
+			}
+		}
+		if (component == null) {
+			setAttunement(getAttunement(), pStack);
+		}
+	}
+
+
+	// If player attacks entity with wand, methods similar to IceBomb
+	public boolean hurtEnemy(ItemStack stack, LivingEntity target, LivingEntity attacker) {
+		if (!super.hurtEnemy(stack, target, attacker)) {
+			int damageDuration = 100; // value in ticks
+			int damageStrength = 5; // big freeze
+			ApplyFrostedEffect.doFrozoneEffect(target, damageDuration, damageStrength, true);
+			// Apply Frost Particle every time player hits entity with wand
+			ParticlePacket particlePacket = new ParticlePacket();
+			for (int i = 0; i < 20; i++) {
+				particlePacket.queueParticle(FWParticleType.FROST.get(), false,
+					target.getX() + (target.getRandom().nextGaussian() * target.getBbWidth() * 0.5),
+					target.getY() + target.getBbHeight() * 0.5F + (target.getRandom().nextGaussian() * target.getBbHeight() * 0.5),
+					target.getZ() + (target.getRandom().nextGaussian() * target.getBbWidth() * 0.5),
+					0, 0, 0);
+			}
+			PacketDistributor.sendToPlayersTrackingEntity(target, particlePacket);
+			damageWand(1, (Player) attacker, attacker.getUsedItemHand());
+			return true;
+		}
+		return false;
+	}
+
+	private void damageWand(int damage, Player player, InteractionHand hand) {
+		player.getItemInHand(hand).hurtAndBreak(damage, player, EquipmentSlot.MAINHAND);
+	}
+
+	private void damageWand(int damage, Player player, UseOnContext context) {
+		context.getItemInHand().hurtAndBreak(damage, player, EquipmentSlot.MAINHAND);
+	}
+
+	// Item Properties
+	@Override
+	public boolean isEnchantable(ItemStack stack) {
+		return false;
+	}
+
+	@Override
+	public boolean isBookEnchantable(ItemStack stack, ItemStack book) {
+		return false;
+	}
+
+	// Cant break blocks with wand lol
+	@Override
+	public float getDestroySpeed(@NonNull ItemStack stack, BlockState state) {
+		return 0;
+	}
+
+	// custom tooltip
+	@Override
+	public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> tooltip, TooltipFlag flags) {
+		super.appendHoverText(stack, context, tooltip, flags);
+		String component = getComponent(stack);
+		if (component != null) { // used for instances of null description (crafting and anvil repair, before item is in player inv)
+			tooltip.add(Component.translatable("item.freezingwand.desc." + component).withStyle(ChatFormatting.GRAY));
+		}
+	}
 }

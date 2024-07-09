@@ -1,10 +1,33 @@
-# User-specific stuff
-.idea/
+# eclipse
+bin
+*.launch
+.settings
+.metadata
+.classpath
+.project
 
-*.iml
+# idea
+out
 *.ipr
 *.iws
+*.iml
+.idea
 
+# gradle
+build
+.gradle
+secrets.properties
+
+# other
+eclipse
+run
+classes
+logs
+run-data
+gource.sh
+
+
+#BUILTIN gitignore from neoforge
 # IntelliJ
 out/
 # mpeltonen/sbt-idea plugin
@@ -100,7 +123,6 @@ $RECYCLE.BIN/
 # Windows shortcuts
 *.lnk
 
-.gradle
 build/
 
 # Ignore Gradle GUI config

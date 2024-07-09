@@ -1,0 +1,6 @@
+// 1.21	2024-07-05T20:24:46.5990564	Item Models: freezingwand
+2deffab5666db7a716a1a8d848a6c220e096407b assets/freezingwand/models/item/freezing_wand.json
+3e8565d6ca6693f10e540bb40ec7ef48234d99b2 assets/freezingwand/models/item/freezing_wand_basic.json
+fc27c90e82a0ad0247bfad57e12df923d3997161 assets/freezingwand/models/item/freezing_wand_blue_ice.json
+5c9082c41d47318ef50887b59820d2657a5506c3 assets/freezingwand/models/item/freezing_wand_ice.json
+9df50e3881975758ac59dff9dde5a7af405d2835 assets/freezingwand/models/item/freezing_wand_packed_ice.json

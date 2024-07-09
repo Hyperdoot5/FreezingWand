@@ -1,7 +1,8 @@
-package hyperdoot5.freezingwand.util;
+package hyperdoot5.freezingwand.events;
 
-import com.mojang.logging.LogUtils;
+import hyperdoot5.freezingwand.FreezingWandMod;
 import hyperdoot5.freezingwand.item.FreezingWandItem;
+import hyperdoot5.freezingwand.util.AttunementUtil;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Position;
@@ -13,14 +14,12 @@ import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.client.event.ClientTickEvent;
-import org.slf4j.Logger;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
 import static hyperdoot5.freezingwand.FreezingWandMod.MODID;
-import static hyperdoot5.freezingwand.FreezingWandMod.DEBUG;
 
 /*PSEUDO CODE
  * Every second get player position and run
@@ -44,30 +43,17 @@ import static hyperdoot5.freezingwand.FreezingWandMod.DEBUG;
  * changeWandAnim
  * check nearBlockList and set the wand animation based on the highest number of block type found*/
 @EventBusSubscriber(modid = MODID, value = Dist.CLIENT)
-public abstract class CheckChunkUtil {
+public abstract class FWTickHandler {
 
-    //    public CheckWorldChunk(ClientTickEvent.Post event){
-//        Minecraft mc = Minecraft.getInstance();
-//        Player player = mc.player;
-//        Level level = mc.level;
+//	@SubscribeEvent
+//	public static void CheckForWand(ClientTickEvent.Post event){
+//		Minecraft mc = Minecraft.getInstance();
+//		Player player = mc.player;
+//		if (player != null && player.tickCount % 20 == 0 && player.getMainHandItem().getItem() instanceof FreezingWandItem){
+//			AttunementUtil.getComponent(player.getMainHandItem());
 //
-//        if (mc.level != null && player != null) {
-//            HashSet<ChunkPos> nearbyChunks = new HashSet<>();
-//            for (int x = -16; x <= 16 ; x += 16 ) {
-//                DEBUG.info("Checking x: " + x);
-//                for (int z = -16; z <= 16 ; z += 16) {
-//                    DEBUG.info("Checking z: " + z);
-//                    nearbyChunks.add(new ChunkPos((int) player.getX() + x, (int) player.getZ() + z));
-//                    DEBUG.info("Added Chunk: " + nearbyChunks.size());
-//                }
-//            }
-//            for (ChunkPos pos : nearbyChunks){
-//                if (level.getChunk(pos.x, pos.z, ChunkStatus.FULL, false) != null){
-//                    List<BlockState> savedBlocksInChunk = (level.getChunk(pos.x, pos.z).getBlockState());
-//                }
-//            }
-//        }
-//    }
+//		}
+//	}
 
     @SubscribeEvent
     public static void CheckRelativePlayerChunk(ClientTickEvent.Post event) {
@@ -91,7 +77,7 @@ public abstract class CheckChunkUtil {
             int NumberOfBlocksDefault = 8; // half a chunk because player as at the center
             int NumberOfBlocks;
             if (level != null && !mc.isPaused()) {
-                DEBUG.info("0");
+//                DEBUG.info("0");
                 Position playerPos = player.position();
                 List<BlockState> blocksToSave = new ArrayList<>();
                 blocksToSave.add(Blocks.ICE.defaultBlockState());
@@ -124,6 +110,13 @@ public abstract class CheckChunkUtil {
 //                        String message = "There is a chill in the air..";
 //                        player.sendSystemMessage(Component.translatable(message));
 //                        FWItems.FREEZING_WAND.toStack().set(DataComponents.CUSTOM_MODEL_DATA, new CustomModelData(1));
+/*
+grab data componenet from wand
+create var for data component of closest block
+if the data component is NOT the same as the data component related to the closest block, then set data component to closest block type
+Update paked, i think
+for (String key : map.keyset())
+*/
 
 //                    DEBUG.info("1");
                 } else {
@@ -136,3 +129,7 @@ public abstract class CheckChunkUtil {
     }
 
 }
+
+/*public static Iterable<BlockPos> getAllAround(BlockPos center, int range) {
+		return BlockPos.betweenClosed(center.offset(-range, -range, -range), center.offset(range, range, range));
+	}*/

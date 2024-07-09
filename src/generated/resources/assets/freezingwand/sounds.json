@@ -1,0 +1,38 @@
+{
+  "block.freezingwand.ice.collected": {
+    "sounds": [
+      {
+        "type": "event",
+        "name": "entity.item.pickup"
+      }
+    ],
+    "subtitle": "subtitles.freezingwand.block.ice.collected"
+  },
+  "block.freezingwand.ice.placed": {
+    "sounds": [
+      {
+        "type": "event",
+        "name": "block.stone.place"
+      }
+    ],
+    "subtitle": "subtitles.freezingwand.block.ice.placed"
+  },
+  "entity.freezingwand.ice.fired": {
+    "sounds": [
+      {
+        "type": "event",
+        "name": "entity.arrow.shoot"
+      }
+    ],
+    "subtitle": "subtitles.freezingwand.entity.ice.fired"
+  },
+  "item.freezingwand.attunement": {
+    "sounds": [
+      {
+        "type": "event",
+        "name": "entity.axolotl.splash"
+      }
+    ],
+    "subtitle": "subtitles.freezingwand.item.attunement"
+  }
+}

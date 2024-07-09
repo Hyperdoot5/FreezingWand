@@ -1,0 +1,32 @@
+{
+  "parent": "minecraft:item/handheld",
+  "overrides": [
+    {
+      "model": "freezingwand:item/freezing_wand_basic",
+      "predicate": {
+        "freezingwand:basic_attunement": 1.0
+      }
+    },
+    {
+      "model": "freezingwand:item/freezing_wand_ice",
+      "predicate": {
+        "freezingwand:ice_attunement": 1.0
+      }
+    },
+    {
+      "model": "freezingwand:item/freezing_wand_packed_ice",
+      "predicate": {
+        "freezingwand:packed_ice_attunement": 1.0
+      }
+    },
+    {
+      "model": "freezingwand:item/freezing_wand_blue_ice",
+      "predicate": {
+        "freezingwand:blue_ice_attunement": 1.0
+      }
+    }
+  ],
+  "textures": {
+    "layer0": "freezingwand:item/freezing_wand/basic"
+  }
+}
