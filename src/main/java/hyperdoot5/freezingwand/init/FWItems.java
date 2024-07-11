@@ -14,7 +14,7 @@ public class FWItems {
     // Item registering
     public static final DeferredItem<Item> FREEZING_WAND = ITEMS.register(
             "freezing_wand", () -> new FreezingWandItem(new Item.Properties()
-			.durability(250)
-//			.component(FWDataComponents.WAND_ATTUNEMENT, "basic_attunement")
+			.durability(2000)
+			.component(FWDataComponents.WAND_ATTUNEMENT, "basic_attunement")
 		));
 }

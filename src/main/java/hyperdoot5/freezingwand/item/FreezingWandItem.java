@@ -32,18 +32,21 @@ import net.neoforged.neoforge.items.ItemHandlerHelper;
 import net.neoforged.neoforge.network.PacketDistributor;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 import static hyperdoot5.freezingwand.FreezingWandMod.DEBUG;
 import static hyperdoot5.freezingwand.FreezingWandMod.prefix;
 import static hyperdoot5.freezingwand.util.AttunementUtil.*;
 
 public class FreezingWandItem extends Item {
-	public static final ResourceLocation BASIC = prefix("basic_attunement");
-	public static final ResourceLocation ICE = prefix("ice_attunement");
-	public static final ResourceLocation PACKED_ICE = prefix("packed_ice_attunement");
-	public static final ResourceLocation BLUE_ICE = prefix("blue_ice_attunement");
+	public static final String basicComponent = "basic_attunement";
+	public static final String iceComponent = "ice_attunement";
+	public static final String packedIceComponent = "packed_ice_attunement";
+	public static final String blueIceComponent = "blue_ice_attunement";
+	public static final ResourceLocation BASIC = prefix(basicComponent);
+	public static final ResourceLocation ICE = prefix(iceComponent);
+	public static final ResourceLocation PACKED_ICE = prefix(packedIceComponent);
+	public static final ResourceLocation BLUE_ICE = prefix(blueIceComponent);
 
 	public FreezingWandItem(Properties properties) {
 		super(properties);
@@ -53,66 +56,74 @@ public class FreezingWandItem extends Item {
 	//Item Functionality
 	@Override
 	public InteractionResult useOn(UseOnContext context) {
-		if (getAttunement() != 0) {
+		Player player = context.getPlayer();
+		if (player != null && !getComponent(player.getMainHandItem()).equals(basicComponent)) {
 			// Variables for readability
-			Player player = context.getPlayer();
+			String component = getComponent(player.getMainHandItem());
 			Level level = context.getLevel();
-			Fluid water_flowing = Fluids.FLOWING_WATER.getFlowing();
-			Fluid water_source = Fluids.WATER.getSource();
-			BlockState ice_block = Blocks.ICE.defaultBlockState();
-			BlockState packed_ice = Blocks.PACKED_ICE.defaultBlockState();
-			BlockState blue_ice = Blocks.BLUE_ICE.defaultBlockState();
-			BlockState snow_block = Blocks.SNOW_BLOCK.defaultBlockState();
-			ItemStack ice_item = Items.ICE.getDefaultInstance();
-			ItemStack packed_ice_item = Items.PACKED_ICE.getDefaultInstance();
-			ItemStack blue_ice_item = Items.BLUE_ICE.getDefaultInstance();
 			BlockPos clickedPos = context.getClickedPos();
 			Direction cardinalDirection = context.getClickedFace();
 			BlockState blockClicked = level.getBlockState(clickedPos);
 			Fluid cardinalFluid = level.getFluidState(clickedPos.relative(cardinalDirection)).getType();
 
-			//vars for selecting what ice block to place and collect
-			BlockState selectedBlock = Blocks.ICE.defaultBlockState();
-			ItemStack selectedItem = Items.ICE.getDefaultInstance();
-			;
+			// Whitelists for blocks, fluids, and items
+			List<Fluid> fluidList = new ArrayList<>(Arrays.asList(Fluids.FLOWING_WATER.getFlowing(), Fluids.WATER.getSource()));
+			List<BlockState> blockList = new ArrayList<>(Arrays.asList(
+				Blocks.ICE.defaultBlockState(), Blocks.PACKED_ICE.defaultBlockState(), Blocks.BLUE_ICE.defaultBlockState()
+			));
+			List<ItemStack> itemList = new ArrayList<>(Arrays.asList(
+				Items.ICE.getDefaultInstance(), Items.PACKED_ICE.getDefaultInstance(), Items.BLUE_ICE.getDefaultInstance()
+			));
+
+			// vars to assist in item function logic
 			boolean placedBlock = false;
 			boolean replacedBlock = false;
 			boolean iceCollected = false;
+			// initializing vars for selected block and item
+			BlockState selectedBlock = blockList.getFirst();
+			ItemStack selectedItem = itemList.getFirst();
 
 
 			// check if can place
-			if (blockClicked == ice_block
-				|| blockClicked == packed_ice
-				|| blockClicked == blue_ice
-				|| blockClicked == snow_block
-				|| cardinalFluid == water_source
-				|| cardinalFluid == water_flowing) {
-				placedBlock = true;
-			}
-//        if (blockSelPos == 4) blockSelPos = 1;
-			// change selected block
+			if (blockList.contains(blockClicked) || fluidList.contains(cardinalFluid)) placedBlock = true;
 
-			switch (getAttunement()) {
-				case 1 -> {
-					selectedBlock = ice_block;
-					selectedItem = ice_item;
+			// change block to place based on wand data component (attunement)
+			switch (component) {
+				case iceComponent -> {
+					selectedBlock = blockList.getFirst();
+					selectedItem = itemList.getFirst();
 				}
-				case 2 -> {
-					selectedBlock = packed_ice;
-					selectedItem = packed_ice_item;
+				case packedIceComponent -> {
+					selectedBlock = blockList.get(1);
+					selectedItem = itemList.get(1);
 				}
-				case 3 -> {
-					selectedBlock = blue_ice;
-					selectedItem = blue_ice_item;
+				case blueIceComponent -> {
+					selectedBlock = blockList.get(2);
+					selectedItem = itemList.getLast();
 				}
 			}
 
 			// LOGICAL SERVER SIDE EVENT
-			//if try to place on a valid block, place selectedblock
-			if (!level.isClientSide && player != null) {
+			// Collect? -> Place? -> Replace?, MUST BE THIS ORDER DUE TO HOW ITS WRITTEN
+			if (!level.isClientSide) {
 				if (player.isShiftKeyDown() && blockClicked == selectedBlock) {
 					level.setBlock(clickedPos, Blocks.AIR.defaultBlockState(), 3);
 					ItemHandlerHelper.giveItemToPlayer(player, new ItemStack(selectedItem.getItem()));
+					// Heal wand when collecting ice
+					switch (component) {
+						case iceComponent -> {
+							damageWand(-1, player, context);
+							player.awardStat(FWStats.ICE_COLLECTED.get());
+						}
+						case packedIceComponent -> {
+							damageWand(-5, player, context);
+							player.awardStat(FWStats.PACKED_ICE_COLLECTED.get());
+						}
+						case blueIceComponent -> {
+							damageWand(-50, player, context);
+							player.awardStat(FWStats.BLUE_ICE_COLLECTED.get());
+						}
+					}
 					iceCollected = true;
 				} else if (placedBlock) {
 					switch (cardinalDirection) {
@@ -123,67 +134,46 @@ public class FreezingWandItem extends Item {
 						case SOUTH -> level.setBlock(clickedPos.relative(Direction.SOUTH), selectedBlock, 3);
 						case WEST -> level.setBlock(clickedPos.relative(Direction.WEST), selectedBlock, 3);
 					}
-					// if player is holding shift when rclick, replace the block they click
+					// Vary damage
+					if (fluidList.contains(cardinalFluid)) {
+						damageWand(0, player, context);
+					} else if (selectedBlock == blockList.getFirst()) {
+						damageWand(2, player, context);
+					} else if (selectedBlock == blockList.get(1)) {
+						damageWand(20, player, context);
+					} else if (selectedBlock == blockList.getLast()) {
+						damageWand(200, player, context);
+					}
 				} else if (!player.isShiftKeyDown()) {
 					level.setBlock(clickedPos, selectedBlock, 3);
+					// Vary damage
+					if (selectedBlock == blockList.getFirst()) {
+						damageWand(4, player, context);
+					} else if (selectedBlock == blockList.get(1)) {
+						damageWand(40, player, context);
+					} else if (selectedBlock == blockList.getLast()) {
+						damageWand(400, player, context);
+					}
 					replacedBlock = true;
 				}
 			}
-			// PHYSICAL CLIENT SIDE EVENT
-			//damage wand & play block place sound
-			if (player != null) {
-				if (placedBlock) {
-
-					// Varywand damage if not building directly from water source or flowing water
-					if ((cardinalFluid == water_source) || (cardinalFluid == water_flowing)) {
-						damageWand(0, player, context);
-					} else if (blockClicked != snow_block) {
-						damageWand(2, player, context);
-					} else {
-						damageWand(5, player, context);
-					}
-					level.playSound(player, clickedPos, FWSounds.BLOCK_PLACED.get(), SoundSource.PLAYERS);
-					return InteractionResult.SUCCESS;
-
-				} else if (replacedBlock) {
-
-					damageWand(10, player, context);
-					level.playSound(player, clickedPos, FWSounds.BLOCK_PLACED.get(), SoundSource.PLAYERS);
-					return InteractionResult.SUCCESS;
-
-				} else if (iceCollected) {
-
-					switch (getAttunement()) {
-						case 1 -> {
-							damageWand(1, player, context);
-							player.awardStat(FWStats.ICE_COLLECTED.get());
-						}
-						case 2 -> {
-							damageWand(10, player, context);
-							player.awardStat(FWStats.PACKED_ICE_COLLECTED.get());
-						}
-						case 3 -> {
-							damageWand(100, player, context);
-							player.awardStat(FWStats.BLUE_ICE_COLLECTED.get());
-						}
-					}
-					level.playSound(player, clickedPos, FWSounds.BLOCK_COLLECTED.get(), SoundSource.PLAYERS);
-					return InteractionResult.SUCCESS;
-				}
+			// PHYSICAL CLIENT SIDE
+			// play relevant sound
+			if (placedBlock || replacedBlock) {
+				level.playSound(player, clickedPos, FWSounds.BLOCK_PLACED.get(), SoundSource.PLAYERS);
+			} else if (iceCollected) {
+				level.playSound(player, clickedPos, FWSounds.BLOCK_COLLECTED.get(), SoundSource.PLAYERS);
 			}
+			return InteractionResult.SUCCESS_NO_ITEM_USED;
 		}
 		return InteractionResult.PASS;
 	}
 
 	@Override
 	public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand hand) {
-		if (!player.isShiftKeyDown() && getAttunement() == 0) {
-			DEBUG.info("BOMB");
+		if (!player.isShiftKeyDown() && getComponent(player.getMainHandItem()).equals(basicComponent)) {
 			if (!level.isClientSide()) {
-				if (!player.getAbilities().instabuild) {
 					damageWand(20, player, hand);
-				}
-//				DEBUG.info("IceBomb");
 				IceBomb ice = new IceBomb(FWEntities.THROWN_ICE.get(), level, player);
 				ice.shootFromRotation(player, player.getXRot(), player.getYRot(), -5.0F, 1.25F, 1.0F);
 				level.addFreshEntity(ice);
@@ -191,27 +181,10 @@ public class FreezingWandItem extends Item {
 			player.playSound(FWSounds.ICE_FIRED.get(), 0.5F, 0.4F / (level.getRandom().nextFloat() * 0.4F + 0.8F));
 			player.getCooldowns().addCooldown(FWItems.FREEZING_WAND.asItem(), 20);
 		}
-		return new InteractionResultHolder<>(InteractionResult.SUCCESS, player.getItemInHand(hand));
+		return new InteractionResultHolder<>(InteractionResult.SUCCESS_NO_ITEM_USED, player.getItemInHand(hand));
 	}
 
-	//Dirty work around when mod loads to handle instances of null component
-	//also fixes component null after item use
-	@Override
-	public void inventoryTick(ItemStack pStack, Level pLevel, Entity pEntity, int pItemSlot, boolean pIsSelected) {
-		String component = pStack.get(FWDataComponents.WAND_ATTUNEMENT);
-		//if component != correct attunement component, then correct it
-		if (component != null) {
-			if (!isCorrectComponent(component)) {
-				setComponent(pStack);
-			}
-		}
-		if (component == null) {
-			setAttunement(getAttunement(), pStack);
-		}
-	}
-
-
-	// If player attacks entity with wand, methods similar to IceBomb
+	// If player attacks entity with wand apply frost effect and add particles each hit
 	public boolean hurtEnemy(ItemStack stack, LivingEntity target, LivingEntity attacker) {
 		if (!super.hurtEnemy(stack, target, attacker)) {
 			int damageDuration = 100; // value in ticks
@@ -263,8 +236,9 @@ public class FreezingWandItem extends Item {
 	public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> tooltip, TooltipFlag flags) {
 		super.appendHoverText(stack, context, tooltip, flags);
 		String component = getComponent(stack);
-		if (component != null) { // used for instances of null description (crafting and anvil repair, before item is in player inv)
-			tooltip.add(Component.translatable("item.freezingwand.desc." + component).withStyle(ChatFormatting.GRAY));
+		tooltip.add(Component.translatable("item.freezingwand.desc." + component).withStyle(ChatFormatting.GRAY));
+		if (stack.isDamaged()) {
+			tooltip.add(Component.translatable("Durability: " + (getMaxDamage(stack) - getDamage(stack)) + "/" + getMaxDamage(stack)));
 		}
 	}
 }
