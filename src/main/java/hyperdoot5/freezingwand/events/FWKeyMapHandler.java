@@ -31,6 +31,7 @@ public class FWKeyMapHandler {
 		InputConstants.Type.KEYSYM, // Default mapping is on the keyboard
 		GLFW.GLFW_KEY_RIGHT_BRACKET, // Default mouse input is the apostrophe button
 		"key.categories.freezingwand.freezingwand"));
+
 	public static final Lazy<KeyMapping> ICE_OVERRIDE_KEYMAP = Lazy.of(() -> new KeyMapping(
 		"key.freezingwand.ice",
 		KeyConflictContext.IN_GAME,
@@ -38,6 +39,7 @@ public class FWKeyMapHandler {
 		InputConstants.Type.KEYSYM, // Default mapping is on the keyboard
 		GLFW.GLFW_KEY_LEFT_BRACKET, // Default mouse input is the apostrophe button
 		"key.categories.freezingwand.freezingwand"));
+
 	public static final Lazy<KeyMapping> PACKED_ICE_OVERRIDE_KEYMAP = Lazy.of(() -> new KeyMapping(
 		"key.freezingwand.packed_ice",
 		KeyConflictContext.IN_GAME,
@@ -45,6 +47,7 @@ public class FWKeyMapHandler {
 		InputConstants.Type.KEYSYM, // Default mapping is on the keyboard
 		GLFW.GLFW_KEY_SEMICOLON, // Default mouse input is the apostrophe button
 		"key.categories.freezingwand.freezingwand"));
+
 	public static final Lazy<KeyMapping> BLUE_ICE_OVERRIDE_KEYMAP = Lazy.of(() -> new KeyMapping(
 		"key.freezingwand.blue_ice",
 		KeyConflictContext.IN_GAME,

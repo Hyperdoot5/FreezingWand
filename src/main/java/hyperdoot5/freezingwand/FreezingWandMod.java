@@ -1,20 +1,26 @@
 package hyperdoot5.freezingwand;
 
+import com.google.common.reflect.Reflection;
 import com.mojang.logging.LogUtils;
 import hyperdoot5.freezingwand.init.*;
+import hyperdoot5.freezingwand.network.AttunementChangePacket;
 import hyperdoot5.freezingwand.network.ParticlePacket;
 import net.minecraft.resources.ResourceLocation;
+import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.fml.ModContainer;
 import net.neoforged.fml.common.Mod;
 import net.neoforged.fml.config.ModConfig;
 import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
 
+import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.network.event.RegisterPayloadHandlersEvent;
 import net.neoforged.neoforge.network.registration.PayloadRegistrar;
 import org.slf4j.Logger;
 
 import java.util.Locale;
+
+import static net.neoforged.fml.loading.FMLEnvironment.dist;
 
 /*
 * NOTICE
@@ -39,7 +45,11 @@ public class FreezingWandMod {
 
     public static final Logger DEBUG = LogUtils.getLogger();
 
-    public FreezingWandMod(IEventBus modEventBus, ModContainer modContainer) {
+	public FreezingWandMod(IEventBus modEventBus, Dist dist) {
+//		Reflection.initialize(ConfigSetup.class);
+//		if (dist.isClient()) {
+//			FWClientSetup.init(modEventBus);
+//		}
 
 		FWItems.ITEMS.register(modEventBus);
 		FWCreativeTabs.CREATIVE_MODE_TABS.register(modEventBus);
@@ -55,8 +65,11 @@ public class FreezingWandMod {
 
 		modEventBus.addListener(this::init);// Register the init method for modloading
 		modEventBus.addListener(this::setupPackets);// Register the setupPackets method for modloading
+//		modEventBus.addListener(ConfigSetup::loadConfigs);
+//		modEventBus.addListener(ConfigSetup::reloadConfigs);
+//		NeoForge.EVENT_BUS.addListener(ConfigSetup::sync);
 
-        modContainer.registerConfig(ModConfig.Type.COMMON, Config.SPEC); // Register our mod's ModConfigSpec so that FML can create and load the config file for us
+//        modContainer.registerConfig(ModConfig.Type.COMMON, Config.SPEC); // Register our mod's ModConfigSpec so that FML can create and load the config file for us
 
         //Register for quirky server setup logs
 //        NeoForge.EVENT_BUS.register(this);
@@ -65,8 +78,7 @@ public class FreezingWandMod {
 	public void setupPackets(RegisterPayloadHandlersEvent event) {
 		PayloadRegistrar registrar = event.registrar(MODID).versioned("1.0.0").optional();
 		registrar.playToClient(ParticlePacket.TYPE, ParticlePacket.STREAM_CODEC, ParticlePacket::handle);
-		//registrar.playToClient(UpdateThrownPacket.TYPE, UpdateThrownPacket.STREAM_CODEC, UpdateThrownPacket::handle);
-		// registrar.playToServer(WipeOreMeterPacket.TYPE, WipeOreMeterPacket.STREAM_CODEC, WipeOreMeterPacket::handle);
+		registrar.playToServer(AttunementChangePacket.TYPE, AttunementChangePacket.STREAM_CODEC, AttunementChangePacket::handle);
 	}
     private void init(final FMLCommonSetupEvent event) {
         DEBUG.info("Freezing Wand Common Setup Initiated");
