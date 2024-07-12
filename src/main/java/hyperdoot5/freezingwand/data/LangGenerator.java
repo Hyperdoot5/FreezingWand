@@ -31,6 +31,7 @@ public class LangGenerator extends FWLangProvider {
 		this.add("item.freezingwand.desc.ice_attunement", "Attunement: Ice");
 		this.add("item.freezingwand.desc.packed_ice_attunement", "Attunement: Packed Ice");
 		this.add("item.freezingwand.desc.blue_ice_attunement", "Attunement: Blue Ice");
+		this.add("item.freezingwand.resonate", "Resonating");
 
         SUBTITLE_GENERATOR.forEach(this::add);
 

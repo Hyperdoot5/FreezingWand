@@ -9,10 +9,7 @@ import net.neoforged.neoforge.network.PacketDistributor;
 
 import javax.annotation.Nullable;
 
-import static hyperdoot5.freezingwand.item.FreezingWandItem.basicComponent;
-import static hyperdoot5.freezingwand.item.FreezingWandItem.iceComponent;
-import static hyperdoot5.freezingwand.item.FreezingWandItem.packedIceComponent;
-import static hyperdoot5.freezingwand.item.FreezingWandItem.blueIceComponent;
+import static hyperdoot5.freezingwand.item.FreezingWandItem.*;
 
 //@EventBusSubscriber(modid = MODID , value = Dist.CLIENT)
 public class AttunementUtil {
@@ -56,13 +53,21 @@ public class AttunementUtil {
 		return stack.get(FWDataComponents.WAND_ATTUNEMENT);
 	}
 
+	@Nullable
+	public static String getAnimComponent(ItemStack stack) {
+		return stack.get(FWDataComponents.WAND_ANIMATION);
+	}
+
 	public static void setComponent(String component, ItemStack stack) {
 		switch (component) {
 			case basicComponent -> stack.set(FWDataComponents.WAND_ATTUNEMENT, basicComponent);
+			case basicAnimatedComponent -> stack.set(FWDataComponents.WAND_ANIMATION, basicAnimatedComponent);
 			case iceComponent -> stack.set(FWDataComponents.WAND_ATTUNEMENT, iceComponent);
+			case iceAnimatedComponent -> stack.set(FWDataComponents.WAND_ANIMATION, iceAnimatedComponent);
 			case packedIceComponent -> stack.set(FWDataComponents.WAND_ATTUNEMENT, packedIceComponent);
+			case packedIceAnimatedComponent -> stack.set(FWDataComponents.WAND_ANIMATION, packedIceAnimatedComponent);
 			case blueIceComponent -> stack.set(FWDataComponents.WAND_ATTUNEMENT, blueIceComponent);
-
+			case blueIceAnimatedComponent -> stack.set(FWDataComponents.WAND_ANIMATION, blueIceAnimatedComponent);
 		}
 	}
 }

@@ -8,9 +8,21 @@
       }
     },
     {
+      "model": "freezingwand:item/freezing_wand_basic_animated",
+      "predicate": {
+        "freezingwand:basic_animation": 1.0
+      }
+    },
+    {
       "model": "freezingwand:item/freezing_wand_ice",
       "predicate": {
         "freezingwand:ice_attunement": 1.0
+      }
+    },
+    {
+      "model": "freezingwand:item/freezing_wand_ice_animated",
+      "predicate": {
+        "freezingwand:ice_animation": 1.0
       }
     },
     {
@@ -20,9 +32,21 @@
       }
     },
     {
+      "model": "freezingwand:item/freezing_wand_packed_ice_animated",
+      "predicate": {
+        "freezingwand:packed_ice_animation": 1.0
+      }
+    },
+    {
       "model": "freezingwand:item/freezing_wand_blue_ice",
       "predicate": {
         "freezingwand:blue_ice_attunement": 1.0
+      }
+    },
+    {
+      "model": "freezingwand:item/freezing_wand_blue_ice_animated",
+      "predicate": {
+        "freezingwand:blue_ice_animation": 1.0
       }
     }
   ],
