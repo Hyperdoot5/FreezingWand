@@ -23,8 +23,6 @@ import hyperdoot5.freezingwand.init.FWParticleType;
 
 import java.util.List;
 
-//Possibly change out for twilightwandbolt
-// changing block to match attunement causes crash due to attunement class being client side driven
 public class IceBomb extends FWThrowable {
 	private int zoneTimer = 101;
 	private boolean hasHit;

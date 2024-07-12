@@ -1,0 +1,15 @@
+{
+  "_comment": "Whether, the texture will be blurred if needed. Defaults to false. Currently, specified by the codec, but unused otherwise both in the files and in code.",
+  "blur": false,
+  "_comment": "Whether, the texture will be clamped if needed. Defaults to false. Currently, specified by the codec, but unused otherwise both in the files and in code.",
+  "clamp": false,
+  "gui": {
+    "_comment": "Specifies, how the texture will be scaled if needed.",
+    "scaling": {
+      "type": "stretch"
+    }
+  },
+  "animation": {
+    "frametime": 5
+  }
+}

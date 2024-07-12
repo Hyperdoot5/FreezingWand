@@ -27,14 +27,12 @@ import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.Fluid;
 import net.minecraft.world.level.material.Fluids;
-import net.minecraft.world.level.saveddata.maps.MapItemSavedData;
 import net.neoforged.neoforge.items.ItemHandlerHelper;
 import net.neoforged.neoforge.network.PacketDistributor;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
 import java.util.*;
 
-import static hyperdoot5.freezingwand.FreezingWandMod.DEBUG;
 import static hyperdoot5.freezingwand.FreezingWandMod.prefix;
 import static hyperdoot5.freezingwand.util.AttunementUtil.*;
 
@@ -43,21 +41,28 @@ public class FreezingWandItem extends Item {
 	public static final String iceComponent = "ice_attunement";
 	public static final String packedIceComponent = "packed_ice_attunement";
 	public static final String blueIceComponent = "blue_ice_attunement";
+	public static final String basicAnimatedComponent = "basic_animation";
+	public static final String iceAnimatedComponent = "ice_animation";
+	public static final String packedIceAnimatedComponent = "packed_ice_animation";
+	public static final String blueIceAnimatedComponent = "blue_ice_animation";
 	public static final ResourceLocation BASIC = prefix(basicComponent);
 	public static final ResourceLocation ICE = prefix(iceComponent);
 	public static final ResourceLocation PACKED_ICE = prefix(packedIceComponent);
 	public static final ResourceLocation BLUE_ICE = prefix(blueIceComponent);
+	public static final ResourceLocation BASIC_ANIMATION = prefix(basicAnimatedComponent);
+	public static final ResourceLocation ICE_ANIMATION = prefix(iceAnimatedComponent);
+	public static final ResourceLocation PACKED_ICE_ANIMATION = prefix(packedIceAnimatedComponent);
+	public static final ResourceLocation BLUE_ICE_ANIMATION = prefix(blueIceAnimatedComponent);
 
 	public FreezingWandItem(Properties properties) {
 		super(properties);
 	}
 
-	//    int blockSelPos = 1;
-	//Item Functionality
+	//Block Placing
 	@Override
 	public InteractionResult useOn(UseOnContext context) {
 		Player player = context.getPlayer();
-		if (player != null && !getComponent(player.getMainHandItem()).equals(basicComponent)) {
+		if (player != null && (!Objects.equals(getComponent(player.getMainHandItem()), basicComponent) && player.getMainHandItem().getItem() instanceof FreezingWandItem)) {
 			// Variables for readability
 			String component = getComponent(player.getMainHandItem());
 			Level level = context.getLevel();
@@ -88,6 +93,7 @@ public class FreezingWandItem extends Item {
 			if (blockList.contains(blockClicked) || fluidList.contains(cardinalFluid)) placedBlock = true;
 
 			// change block to place based on wand data component (attunement)
+			//noinspection DataFlowIssue
 			switch (component) {
 				case iceComponent -> {
 					selectedBlock = blockList.getFirst();
@@ -169,21 +175,40 @@ public class FreezingWandItem extends Item {
 		return InteractionResult.PASS;
 	}
 
+	// Ranged Use
 	@Override
 	public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand hand) {
-		if (!player.isShiftKeyDown() && getComponent(player.getMainHandItem()).equals(basicComponent)) {
-			if (!level.isClientSide()) {
+		if ((Objects.equals(getComponent(player.getMainHandItem()), basicComponent) && player.getMainHandItem().getItem() instanceof FreezingWandItem)) {
+			if (!player.isShiftKeyDown()) {
+				if (!level.isClientSide()) {
 					damageWand(20, player, hand);
-				IceBomb ice = new IceBomb(FWEntities.THROWN_ICE.get(), level, player);
-				ice.shootFromRotation(player, player.getXRot(), player.getYRot(), -5.0F, 1.25F, 1.0F);
-				level.addFreshEntity(ice);
+					IceBomb ice = new IceBomb(FWEntities.THROWN_ICE.get(), level, player);
+					ice.shootFromRotation(player, player.getXRot(), player.getYRot(), -5F, 1F, 1.0F);
+					level.addFreshEntity(ice);
+				}
+				player.playSound(FWSounds.ICE_FIRED.get(), 0.5F, 0.4F / (level.getRandom().nextFloat() * 0.4F + 0.8F));
+				player.getCooldowns().addCooldown(FWItems.FREEZING_WAND.asItem(), 20);
+			} else {
+				if (!level.isClientSide()) {
+					damageWand(40, player, hand);
+					IceBomb ice = new IceBomb(FWEntities.THROWN_ICE.get(), level, player);
+					ice.shootFromRotation(player, player.getXRot(), player.getYRot(), 0F, 3F, 0.25F);
+					level.addFreshEntity(ice);
+				}
+				player.playSound(FWSounds.ICE_FIRED.get(), 0.5F, 0.4F / (level.getRandom().nextFloat() * 0.4F + 0.8F));
+				player.getCooldowns().addCooldown(FWItems.FREEZING_WAND.asItem(), 40);
 			}
-			player.playSound(FWSounds.ICE_FIRED.get(), 0.5F, 0.4F / (level.getRandom().nextFloat() * 0.4F + 0.8F));
-			player.getCooldowns().addCooldown(FWItems.FREEZING_WAND.asItem(), 20);
 		}
 		return new InteractionResultHolder<>(InteractionResult.SUCCESS_NO_ITEM_USED, player.getItemInHand(hand));
 	}
 
+	// No animations when not in main hand
+	@Override
+	public void inventoryTick(ItemStack pStack, Level pLevel, Entity pEntity, int pSlotId, boolean pIsSelected) {
+		if (!pIsSelected && pStack.has(FWDataComponents.WAND_ANIMATION)) {
+			pStack.remove(FWDataComponents.WAND_ANIMATION);
+		}
+	}
 	// If player attacks entity with wand apply frost effect and add particles each hit
 	public boolean hurtEnemy(ItemStack stack, LivingEntity target, LivingEntity attacker) {
 		if (!super.hurtEnemy(stack, target, attacker)) {
@@ -237,6 +262,9 @@ public class FreezingWandItem extends Item {
 		super.appendHoverText(stack, context, tooltip, flags);
 		String component = getComponent(stack);
 		tooltip.add(Component.translatable("item.freezingwand.desc." + component).withStyle(ChatFormatting.GRAY));
+		if (stack.has(FWDataComponents.WAND_ANIMATION) && !Objects.equals(stack.get(FWDataComponents.WAND_ANIMATION), basicAnimatedComponent)) {
+			tooltip.add(Component.translatable("item.freezingwand.resonate").withStyle(ChatFormatting.AQUA));
+		}
 		if (stack.isDamaged()) {
 			tooltip.add(Component.translatable("Durability: " + (getMaxDamage(stack) - getDamage(stack)) + "/" + getMaxDamage(stack)));
 		}
