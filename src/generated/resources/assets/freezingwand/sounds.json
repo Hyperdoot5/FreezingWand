@@ -17,6 +17,15 @@
     ],
     "subtitle": "subtitles.freezingwand.block.ice.placed"
   },
+  "entity.freezingwand.ice.bolt": {
+    "sounds": [
+      {
+        "type": "event",
+        "name": "entity.blaze.shoot"
+      }
+    ],
+    "subtitle": "subtitles.freezingwand.entity.ice.bolt"
+  },
   "entity.freezingwand.ice.fired": {
     "sounds": [
       {

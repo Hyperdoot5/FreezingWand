@@ -17,22 +17,6 @@ import java.util.Optional;
 
 @EventBusSubscriber(modid = FreezingWandMod.MODID)
 public class EntityEvents {
-	@SubscribeEvent
-	public static void entityHurts(LivingDamageEvent event) {
-		LivingEntity living = event.getEntity();
-		DamageSource source = event.getSource();
-		Entity trueSource = source.getEntity();
-
-		// frozone
-		if (source.getEntity() != null && trueSource != null && event.getAmount() > 0) {
-			int chillLevel = getGearCoverage(living, true);
-
-			if (trueSource instanceof LivingEntity target) {
-				ApplyFrostedEffect.doFrozoneEffect(target, chillLevel * 5 + 5, chillLevel, chillLevel > 0);
-			}
-		}
-
-	}
 
 	@SubscribeEvent
 	public static void onLivingHurtEvent(LivingDamageEvent event) {
@@ -48,22 +32,5 @@ public class EntityEvents {
 				if (mobEffectInstance.getAmplifier() >= 0) living.addEffect(mobEffectInstance);
 			}
 		});
-	}
-
-	/**
-	 * Add up the number of armor pieces the player is wearing (either fiery or yeti)
-	 * <p>
-	 * MIGHT ENABLE LATER IF DR IS NECESSARY
-	 */
-	public static int getGearCoverage(LivingEntity entity, boolean yeti) {
-		int amount = 0;
-
-		for (ItemStack armor : entity.getArmorSlots()) {
-			if (!armor.isEmpty()) {
-				amount++;
-			}
-		}
-
-		return amount;
 	}
 }

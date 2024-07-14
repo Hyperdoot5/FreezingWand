@@ -26,23 +26,19 @@ import static net.neoforged.fml.loading.FMLEnvironment.dist;
 * NOTICE
 *
 * Eventhough in the world of programming there is a lot of copy & paste of what works,
-* I would like to give credit to the TwilightForestMod for its inspiration, many solutions, and general mod structuring,
+ * I would like to give credit to the TwilightForestMod and its creators for its inspiration, many solutions, and general mod structuring,
 *
 * I saw what worked and what was readable and decided if it aint broke, dont fix it
 * as such many naming schemes are similar
 *
 */
 
-//ENSURE ALL SNOW_GUARDIAN INSTANCES ARE FROST
-//ENSURE ALL CHILL AURA ARE FROZONE
-//ENSURE ALL ICE BOMB ARE RENAME TO SOMETHING ELSE
-//ENSURE EVERYTHING IS ADDED TO DATA GEN WHEN DONE
-//REFERR TO OREMETER PACKET FOR POSSIBLE PACKET LAYOUT FOR WAND
+// OPTIONAL ADDITIONS:
+// Add config functionality (low priority -> MOD is Good Enough)
 
 @Mod(FreezingWandMod.MODID)
 public class FreezingWandMod {
     public static final String MODID = "freezingwand";
-
     public static final Logger DEBUG = LogUtils.getLogger();
 
 	public FreezingWandMod(IEventBus modEventBus, Dist dist) {
@@ -58,7 +54,6 @@ public class FreezingWandMod {
         FWDataComponents.COMPONENTS.register(modEventBus);
 		FWSounds.SOUNDS.register(modEventBus);
 		FWEntities.ENTITIES.register(modEventBus);
-		;
 		FWMobEffects.MOB_EFFECTS.register(modEventBus);
 		FWParticleType.PARTICLE_TYPES.register(modEventBus);
 		FWEnchantmentEffects.ENTITY_EFFECTS.register(modEventBus);
@@ -68,11 +63,6 @@ public class FreezingWandMod {
 //		modEventBus.addListener(ConfigSetup::loadConfigs);
 //		modEventBus.addListener(ConfigSetup::reloadConfigs);
 //		NeoForge.EVENT_BUS.addListener(ConfigSetup::sync);
-
-//        modContainer.registerConfig(ModConfig.Type.COMMON, Config.SPEC); // Register our mod's ModConfigSpec so that FML can create and load the config file for us
-
-        //Register for quirky server setup logs
-//        NeoForge.EVENT_BUS.register(this);
     }
 
 	public void setupPackets(RegisterPayloadHandlersEvent event) {
@@ -81,18 +71,9 @@ public class FreezingWandMod {
 		registrar.playToServer(AttunementChangePacket.TYPE, AttunementChangePacket.STREAM_CODEC, AttunementChangePacket::handle);
 	}
     private void init(final FMLCommonSetupEvent event) {
-        DEBUG.info("Freezing Wand Common Setup Initiated");
+		DEBUG.info("Freezing Wand Setup Initiated");
         event.enqueueWork(FWStats::init); // Not threadsafe, put on main thread
     }
-//
-//     The constructor for the mod class is the first code that is run when your mod is loaded.
-//     FML will recognize some parameter types like IEventBus or ModContainer and pass them in automatically.
-//     You can use SubscribeEvent and let the Event Bus discover methods to call
-//    @SubscribeEvent
-//    public void onServerStarting(ServerStartingEvent event) {
-//        // Do something when the server starts
-//        DEBUG.info("Freezing Wand Acknowledges the Server");
-//    }
 
     public static ResourceLocation prefix(String name) {
         return ResourceLocation.fromNamespaceAndPath(MODID, name.toLowerCase(Locale.ROOT));

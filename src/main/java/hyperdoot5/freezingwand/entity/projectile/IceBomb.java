@@ -24,26 +24,23 @@ import hyperdoot5.freezingwand.init.FWParticleType;
 import java.util.List;
 
 public class IceBomb extends FWThrowable {
-	private int zoneTimer = 101;
+	private int zoneTimer = 100;
 	private boolean hasHit;
 
 	public IceBomb(EntityType<? extends IceBomb> type, Level level) {
 		super(type, level);
 	}
 
-	public IceBomb(EntityType<? extends IceBomb> type, Level level, LivingEntity thrower) {
-		super(type, level, thrower);
-	}
-
-	public IceBomb(Level level, Position pos) {
-		super(FWEntities.THROWN_ICE.get(), level, pos.x(), pos.y(), pos.z());
+	public IceBomb(Level level, LivingEntity thrower) {
+		super(FWEntities.THROWN_ICE.get(), level, thrower);
+		this.shootFromRotation(thrower, thrower.getXRot(), thrower.getYRot(), -5F, 1F, 1F);
 	}
 
 	@Override
 	protected void onHitBlock(BlockHitResult result) {
 		this.setDeltaMovement(0.0D, 0.0D, 0.0D);
 		this.hasHit = true;
-		this.doTerrainEffects(2);
+		doTerrainEffects(2);
 	}
 
 	@Override
@@ -110,16 +107,6 @@ public class IceBomb extends FWThrowable {
 		}
 	}
 
-	@Override
-	public void makeTrail(ParticleOptions particle, double r, double g, double b, int amount) {
-		for (int i = 0; i < amount; i++) {
-			double dx = this.getX() + 0.5D * (this.random.nextDouble() - this.random.nextDouble());
-			double dy = this.getY() + 0.5D * (this.random.nextDouble() - this.random.nextDouble()) + 0.5D;
-			double dz = this.getZ() + 0.5D * (this.random.nextDouble() - this.random.nextDouble());
-			this.level().addParticle(particle, dx, dy, dz, r, g, b);
-		}
-	}
-
 	private void makeIceZone() {
 		if (this.level().isClientSide()) {
 			for (int i = 0; i < 16; i++) {
@@ -130,7 +117,7 @@ public class IceBomb extends FWThrowable {
 				this.level().addParticle(FWParticleType.FROST.get(), dx, dy, dz, 0, 0, 0);
 			}
 		} else {
-			if (this.zoneTimer == 99) this.doTerrainEffects(3);
+			if (this.zoneTimer == 98) this.doTerrainEffects(3);
 			if (this.zoneTimer % 20 == 0) this.hitNearbyEntities();
 		}
 	}

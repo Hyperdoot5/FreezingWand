@@ -26,6 +26,7 @@
   "stat.freezingwand.packed_ice_collected": "Packed Ice Blocks Collected",
   "subtitles.freezingwand.block.ice.collected": "Ice gathered",
   "subtitles.freezingwand.block.ice.placed": "Ice placed",
+  "subtitles.freezingwand.entity.ice.bolt": "Bolt fired",
   "subtitles.freezingwand.entity.ice.fired": "Ice fired",
   "subtitles.freezingwand.item.attunement": "Changed wand attunement"
 }

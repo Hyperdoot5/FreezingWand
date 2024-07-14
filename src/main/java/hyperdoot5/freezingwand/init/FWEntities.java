@@ -19,7 +19,6 @@ import hyperdoot5.freezingwand.FreezingWandMod;
 import hyperdoot5.freezingwand.entity.*;
 import hyperdoot5.freezingwand.entity.projectile.*;
 
-//@EventBusSubscriber(modid = FreezingWandMod.MODID, bus = EventBusSubscriber.Bus.MOD)
 public class FWEntities {
 	public static final DeferredRegister<EntityType<?>> ENTITIES = DeferredRegister.create(Registries.ENTITY_TYPE, FreezingWandMod.MODID);
 

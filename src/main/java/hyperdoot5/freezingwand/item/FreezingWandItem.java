@@ -1,6 +1,7 @@
 package hyperdoot5.freezingwand.item;
 
 import hyperdoot5.freezingwand.enchantment.ApplyFrostedEffect;
+import hyperdoot5.freezingwand.entity.projectile.IceBolt;
 import hyperdoot5.freezingwand.entity.projectile.IceBomb;
 import hyperdoot5.freezingwand.init.*;
 import hyperdoot5.freezingwand.network.ParticlePacket;
@@ -58,7 +59,7 @@ public class FreezingWandItem extends Item {
 		super(properties);
 	}
 
-	//Block Placing
+	//Block Placing and Collecting
 	@Override
 	public InteractionResult useOn(UseOnContext context) {
 		Player player = context.getPlayer();
@@ -93,7 +94,6 @@ public class FreezingWandItem extends Item {
 			if (blockList.contains(blockClicked) || fluidList.contains(cardinalFluid)) placedBlock = true;
 
 			// change block to place based on wand data component (attunement)
-			//noinspection DataFlowIssue
 			switch (component) {
 				case iceComponent -> {
 					selectedBlock = blockList.getFirst();
@@ -175,27 +175,23 @@ public class FreezingWandItem extends Item {
 		return InteractionResult.PASS;
 	}
 
-	// Ranged Use
+	// Ranged Function
 	@Override
 	public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand hand) {
 		if ((Objects.equals(getComponent(player.getMainHandItem()), basicComponent) && player.getMainHandItem().getItem() instanceof FreezingWandItem)) {
 			if (!player.isShiftKeyDown()) {
 				if (!level.isClientSide()) {
 					damageWand(20, player, hand);
-					IceBomb ice = new IceBomb(FWEntities.THROWN_ICE.get(), level, player);
-					ice.shootFromRotation(player, player.getXRot(), player.getYRot(), -5F, 1F, 1.0F);
-					level.addFreshEntity(ice);
+					level.addFreshEntity(new IceBomb(level, player));
 				}
 				player.playSound(FWSounds.ICE_FIRED.get(), 0.5F, 0.4F / (level.getRandom().nextFloat() * 0.4F + 0.8F));
 				player.getCooldowns().addCooldown(FWItems.FREEZING_WAND.asItem(), 20);
-			} else {
+			} else { //alt firing mode
 				if (!level.isClientSide()) {
 					damageWand(40, player, hand);
-					IceBomb ice = new IceBomb(FWEntities.THROWN_ICE.get(), level, player);
-					ice.shootFromRotation(player, player.getXRot(), player.getYRot(), 0F, 3F, 0.25F);
-					level.addFreshEntity(ice);
+					level.addFreshEntity(new IceBolt(level, player));
 				}
-				player.playSound(FWSounds.ICE_FIRED.get(), 0.5F, 0.4F / (level.getRandom().nextFloat() * 0.4F + 0.8F));
+				player.playSound(FWSounds.BOLT_FIRED.get(), 0.5F, 0.4F / (level.getRandom().nextFloat() * 0.4F + 0.8F));
 				player.getCooldowns().addCooldown(FWItems.FREEZING_WAND.asItem(), 40);
 			}
 		}
@@ -209,32 +205,29 @@ public class FreezingWandItem extends Item {
 			pStack.remove(FWDataComponents.WAND_ANIMATION);
 		}
 	}
-	// If player attacks entity with wand apply frost effect and add particles each hit
+
+	// If player smacks an entity with the wand
 	public boolean hurtEnemy(ItemStack stack, LivingEntity target, LivingEntity attacker) {
-		if (!super.hurtEnemy(stack, target, attacker)) {
-			int damageDuration = 100; // value in ticks
-			int damageStrength = 5; // big freeze
-			ApplyFrostedEffect.doFrozoneEffect(target, damageDuration, damageStrength, true);
-			// Apply Frost Particle every time player hits entity with wand
-			ParticlePacket particlePacket = new ParticlePacket();
-			for (int i = 0; i < 20; i++) {
-				particlePacket.queueParticle(FWParticleType.FROST.get(), false,
-					target.getX() + (target.getRandom().nextGaussian() * target.getBbWidth() * 0.5),
-					target.getY() + target.getBbHeight() * 0.5F + (target.getRandom().nextGaussian() * target.getBbHeight() * 0.5),
-					target.getZ() + (target.getRandom().nextGaussian() * target.getBbWidth() * 0.5),
-					0, 0, 0);
-			}
-			PacketDistributor.sendToPlayersTrackingEntity(target, particlePacket);
-			damageWand(1, (Player) attacker, attacker.getUsedItemHand());
-			return true;
+		int damageDuration = 100; // value in ticks
+		int damageStrength = 5; // big freeze
+		ApplyFrostedEffect.doFrozoneEffect(target, damageDuration, damageStrength, true);
+		// Apply Frost Particle every time player hits entity with wand
+		ParticlePacket particlePacket = new ParticlePacket();
+		for (int i = 0; i < 20; i++) {
+			particlePacket.queueParticle(FWParticleType.FROST.get(), false,
+				target.getX() + (target.getRandom().nextGaussian() * target.getBbWidth() * 0.5),
+				target.getY() + target.getBbHeight() * 0.5F + (target.getRandom().nextGaussian() * target.getBbHeight() * 0.5),
+				target.getZ() + (target.getRandom().nextGaussian() * target.getBbWidth() * 0.5),
+				0, 0, 0);
 		}
-		return false;
+		PacketDistributor.sendToPlayersTrackingEntity(target, particlePacket);
+		damageWand(1, (Player) attacker, attacker.getUsedItemHand());
+		return true;
 	}
 
 	private void damageWand(int damage, Player player, InteractionHand hand) {
 		player.getItemInHand(hand).hurtAndBreak(damage, player, EquipmentSlot.MAINHAND);
 	}
-
 	private void damageWand(int damage, Player player, UseOnContext context) {
 		context.getItemInHand().hurtAndBreak(damage, player, EquipmentSlot.MAINHAND);
 	}

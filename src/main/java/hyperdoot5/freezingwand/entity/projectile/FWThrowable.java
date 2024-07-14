@@ -12,17 +12,12 @@ public class FWThrowable extends ThrowableProjectile {
 		super(type, worldIn);
 	}
 
-	public FWThrowable(EntityType<? extends FWThrowable> type, Level worldIn, double x, double y, double z) {
-		super(type, x, y, z, worldIn);
-	}
-
 	public FWThrowable(EntityType<? extends FWThrowable> type, Level worldIn, LivingEntity throwerIn) {
 		super(type, throwerIn, worldIn);
 	}
 
 	@Override
 	protected void defineSynchedData(SynchedEntityData.Builder builder) {
-
 	}
 
 	public void makeTrail(ParticleOptions particle, int amount) {

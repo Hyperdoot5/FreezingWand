@@ -19,5 +19,6 @@ public class SoundGenerator extends FWSoundProvider {
 		this.generateExistingSoundWithSubtitle(FWSounds.BLOCK_PLACED, SoundEvents.STONE_PLACE, "Ice placed");
 		this.generateExistingSoundWithSubtitle(FWSounds.BLOCK_COLLECTED, SoundEvents.ITEM_PICKUP, "Ice gathered");
 		this.generateExistingSoundWithSubtitle(FWSounds.ICE_FIRED, SoundEvents.ARROW_SHOOT, "Ice fired");
+		this.generateExistingSoundWithSubtitle(FWSounds.BOLT_FIRED, SoundEvents.BLAZE_SHOOT, "Bolt fired");
 	}
 }
