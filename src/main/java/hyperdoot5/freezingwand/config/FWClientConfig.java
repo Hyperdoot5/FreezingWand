@@ -5,6 +5,9 @@
 //import java.util.ArrayList;
 //import java.util.List;
 //
+/*
+ * COPIED FROM TWILIGHT FOREST MOD
+ */
 //public class FWClientConfig {
 //
 //    final ModConfigSpec.BooleanValue silentCicadas;

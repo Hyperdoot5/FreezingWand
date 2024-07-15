@@ -11,6 +11,9 @@
 //import net.neoforged.neoforge.server.ServerLifecycleHooks;
 //import org.apache.commons.lang3.tuple.Pair;
 //
+/*
+ * COPIED FROM TWILIGHT FOREST MOD
+ */
 //public final class ConfigSetup {
 //    private static final ModConfigSpec CLIENT_SPEC;
 //    private static final ModConfigSpec COMMON_SPEC;

@@ -19,7 +19,9 @@
 //import java.util.ArrayList;
 //import java.util.List;
 //import java.util.UUID;
-//
+/*
+ * COPIED FROM TWILIGHT FOREST MOD
+ */
 //public class FWConfig {
 //
 //    protected static final String CONFIG_ID = "config." + FreezingWandMod.MODID;
