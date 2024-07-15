@@ -25,6 +25,10 @@ public class IceBolt extends FWThrowable {
 		this.shootFromRotation(thrower, thrower.getXRot(), thrower.getYRot(), 0F, 2F, 1F);
 	}
 
+	public IceBolt(Level worldIn, double x, double y, double z) {
+		super(FWEntities.THROWN_ICE.get(), worldIn, x, y, z);
+	}
+
 	@Override
 	protected void onHitBlock(BlockHitResult result) {
 		hitNearbyEntities(2);

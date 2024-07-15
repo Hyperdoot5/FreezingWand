@@ -27,43 +27,15 @@ import static hyperdoot5.freezingwand.item.FreezingWandItem.*;
 import static hyperdoot5.freezingwand.util.AttunementUtil.getComponent;
 import static hyperdoot5.freezingwand.util.AttunementUtil.setComponent;
 
-/*PSEUDO CODE
- * Every second get player position and run
- *make as customizable as possible, if we can replace param with var do so to enable easy customization
- * make both versions and allow user to decide how to check for blocks w/ customizations
- *
- * CheckWorldChunk Versions
- * get worldChunkPos player is in _> store in chunk array
- * get worldChunkPos around player position of detectionRange size (default 3x3x3)-> store in chunk array
- * check each chunk for ice, packed ice, and blue ice (iterative for loop) -> store block position in savedBlock array w/ blockType -> store both data in blockHashMap?
- * !savedBlock.isEmpty() ? changeWandAnim : return;
- *
- * CheckRelativePlayerChunk Version
- * draw a chunk around the player position (iterative for loop)
- * {
- * check each block during draw -> if blockChecked == ice, packed ice, or blue ice -> store in nearBlockList & set boolean nearBlock true
- * if nearBlock return changeWandAnim.blockChecked, else continue checking blocks
- * }
- * if nearBlockList.isEmpty() -> changeWandAnim.DefaultState
- *
- * changeWandAnim
- * check nearBlockList and set the wand animation based on the highest number of block type found*/
 @EventBusSubscriber(modid = MODID, value = Dist.CLIENT)
 public abstract class FWTickHandler {
-
-//	@SubscribeEvent
-//	public static void CheckForWand(ClientTickEvent.Post event){
-//		Minecraft mc = Minecraft.getInstance();
-//		Player player = mc.player;
-//		if (player != null && player.tickCount % 20 == 0 && player.getMainHandItem().getItem() instanceof FreezingWandItem){
-//			AttunementUtil.getComponent(player.getMainHandItem());
-//
-//		}
-//	}
-
+	/* POSSIBLE FUTURE ADDITIONS:
+	 * add a similar check method but instead of drawing a chunk, draw a sphere around the player
+	 * */
 	@SubscribeEvent
 	public static void CheckRelativePlayerChunk(ClientTickEvent.Post event) {
-		/*   CheckRelativePlayerChunk Version
+
+		/*   PSEUDO CODE
 		 * draw a chunk around the player position (iterative for loop)
 		 * {
 		 * check each block during draw -> if blockChecked == ice, packed ice, or blue ice -> store in nearBlockList & set boolean nearBlock true
@@ -93,9 +65,8 @@ public abstract class FWTickHandler {
 						case packedIceComponent -> blockToSave = Blocks.PACKED_ICE.defaultBlockState();
 						case blueIceComponent -> blockToSave = Blocks.BLUE_ICE.defaultBlockState();
 					}
-//                HashMap<Double, BlockState> nearBlocks = new HashMap<>();
 					boolean nearBlocks = false;
-
+					// Implimented for possible config customization in the future
 					switch (NumberOfChunks) {
 						case 2 -> NumberOfBlocks = NumberOfBlocksDefault * 3; //8 + 16
 						case 3 -> NumberOfBlocks = NumberOfBlocksDefault * 5; //8 + 32
@@ -115,7 +86,6 @@ public abstract class FWTickHandler {
 								BlockPos blockPos = new BlockPos(x, y, z);
 								BlockState blockChecked = level.getBlockState(blockPos);
 								if (blockToSave == blockChecked) {
-//                                nearBlocks.put(blockPos.distToCenterSqr(playerPos), blockChecked);
 									nearBlocks = true;
 									break;
 								}
@@ -148,7 +118,3 @@ public abstract class FWTickHandler {
 	}
 
 }
-
-/*public static Iterable<BlockPos> getAllAround(BlockPos center, int range) {
-		return BlockPos.betweenClosed(center.offset(-range, -range, -range), center.offset(range, range, range));
-	}*/

@@ -5,7 +5,9 @@
 //
 //import java.util.ArrayList;
 //import java.util.List;
-//
+/*
+ * COPIED FROM TWILIGHT FOREST MOD
+ */
 //public class FWCommonConfig {
 //
 //    final Dimension DIMENSION = new Dimension();

@@ -28,8 +28,8 @@ import static net.neoforged.fml.loading.FMLEnvironment.dist;
 * Eventhough in the world of programming there is a lot of copy & paste of what works,
  * I would like to give credit to the TwilightForestMod and its creators for its inspiration, many solutions, and general mod structuring,
 *
-* I saw what worked and what was readable and decided if it aint broke, dont fix it
-* as such many naming schemes are similar
+ * I saw what worked and what was readable and decided if it ain't broke, don't fix it
+ * as such many naming schemes and code is similar
 *
 */
 
